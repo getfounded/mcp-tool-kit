@@ -1,0 +1,24 @@
+services:
+  mcp-server:
+    build: .
+    ports:
+      - "8000:8000"  # Maps host port 8000 to container port 8000
+    volumes:
+      - ./.env:/app/.env  # Mount .env file for environment variables
+    environment:
+      - BRAVE_API_KEY=${BRAVE_API_KEY}
+      - BROWSERBASE_API_KEY=${BROWSERBASE_API_KEY}
+      - BROWSERBASE_PROJECT_ID=${BROWSERBASE_PROJECT_ID}
+      - NEWS_API_KEY=${NEWS_API_KEY}
+      - PYTHONUNBUFFERED=1  # Ensures python output isn't buffered
+      - MCP_HOST=0.0.0.0  # Host binding for MCP server
+      - MCP_PORT=8000     # Port for MCP server
+      - MCP_LOG_LEVEL=debug  # Log level
+    restart: unless-stopped
+    tty: true
+    healthcheck:
+      test: ["CMD", "./healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s  

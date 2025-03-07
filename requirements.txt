@@ -1,0 +1,11 @@
+mcp>=0.4.0  # Specify a minimum version to ensure compatibility
+newsapi-python>=0.2.7
+python-dotenv>=1.0.0
+httpx>=0.25.0
+pillow>=10.0.0
+pydantic>=2.0.0
+pandas
+requests
+python-pptx
+nltk
+msal
