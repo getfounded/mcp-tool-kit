@@ -9,3 +9,5 @@ requests
 python-pptx
 nltk
 msal
+numpy
+httpx

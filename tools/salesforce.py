@@ -6,8 +6,7 @@ from typing import Dict, List, Any, Optional, Union
 from enum import Enum
 
 # Ensure compatibility with mcp server
-from mcp.server.fastmcp import FastMCP, Context
-
+from mcp.server.fastmcp import FastMCP, Context  # type: ignore
 # External MCP reference for tool registration
 external_mcp = None
 
