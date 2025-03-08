@@ -1,0 +1,3 @@
+[console_scripts]
+mcptoolkit-config = mcptoolkit.config_ui:main
+mcptoolkit-server = mcptoolkit.mcp_unified_server:main

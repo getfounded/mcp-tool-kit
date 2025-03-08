@@ -152,13 +152,12 @@ AVAILABLE_TOOLS = [
     "browserbase",
     "worldbank",
     "news_api",
-    "data_analysis",
-    "document_management",
-    "outlook",
-    "salesforce",
-    "linkedin",
     "shopify",
-    "yfinance"
+    "yfinance",
+    "excel",
+    "quickbooks",
+    "browser_automation",
+    "fred"
 ]
 
 # Server Lifespan and Startup
