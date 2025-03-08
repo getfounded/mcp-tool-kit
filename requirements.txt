@@ -11,3 +11,5 @@ nltk
 msal
 numpy
 httpx
+numpy
+    
