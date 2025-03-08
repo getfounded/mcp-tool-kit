@@ -14,7 +14,7 @@ The MCP Unified Server provides a unified interface for Claude to interact with 
 - **World Bank API**: Access to economic and development data
 - **News API**: Access to global news sources and articles
 - **PowerPoint**: Create and manipulate PowerPoint presentations
-- **XlsxWriter**: Create and manipulate Excel spreadsheets
+- **Excel**: Create and manipulate Excel spreadsheets
 
 ## Architecture
 
