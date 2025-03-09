@@ -20,11 +20,14 @@ The MCP Unified Server provides a unified interface for Claude to interact with 
 - **Time tools**: Get current time in different timezones, convert between timezones
 - **Sequential thinking**: A tool for dynamic and reflective problem-solving
 - **Brave Search**: Web and local search capabilities
-- **Browserbase**: Browser automation for web interactions
+- **Browser automation**: Complete browser control via Browserbase and Playwright
 - **World Bank API**: Access to economic and development data
 - **News API**: Access to global news sources and articles
 - **PowerPoint**: Create and manipulate PowerPoint presentations
 - **Excel**: Create and manipulate Excel spreadsheets
+- **QuickBooks**: Financial and accounting operations
+- **Shopify**: E-commerce platform integration
+- **And many more specialized tools**
 
 ## Usage Examples
 
@@ -114,7 +117,7 @@ client.call_tool("sequentialthinking", {
 })
 ```
 
-### Example 3: Building a Complete Workflow
+### Example 5: Building a Complete Workflow
 
 ```python
 from mcp.client import MCPClient
@@ -216,6 +219,195 @@ def run_market_research(company_name, market_sector):
 research_folder = run_market_research("Acme Corp", "technology")
 ```
 
+```python
+from mcp.client import MCPClient
+
+# Connect to the MCP server
+client = MCPClient("http://localhost:8000")
+
+# --- Playwright Browser Automation ---
+# Launch a new browser
+browser_info = client.call_tool("playwright_launch_browser", {
+    "browser_type": "chromium",
+    "headless": False  # Set to True for headless operation
+})
+
+# Store the browser_id for future operations
+browser_id = browser_info["browser_id"]
+page_id = browser_info["page_id"]
+
+# Navigate to a website
+client.call_tool("playwright_navigate", {
+    "page_id": page_id,
+    "url": "https://example.com/login"
+})
+
+# Fill login form
+client.call_tool("playwright_fill", {
+    "page_id": page_id,
+    "selector": "#username",
+    "value": "user@example.com"
+})
+
+client.call_tool("playwright_fill", {
+    "page_id": page_id,
+    "selector": "#password",
+    "value": "password123"
+})
+
+# Click login button
+client.call_tool("playwright_click", {
+    "page_id": page_id,
+    "selector": "#login-button"
+})
+
+# Wait for navigation to complete
+client.call_tool("playwright_wait_for_navigation", {
+    "page_id": page_id
+})
+
+# Take screenshot of dashboard
+client.call_tool("playwright_screenshot", {
+    "page_id": page_id,
+    "path": "dashboard.png"
+})
+
+# Extract data from the page
+dashboard_content = client.call_tool("playwright_get_content", {
+    "page_id": page_id
+})
+
+# Execute JavaScript to extract data
+data = client.call_tool("playwright_evaluate", {
+    "page_id": page_id,
+    "expression": """
+        // Get all table data as a JavaScript object
+        const tableData = [];
+        const rows = document.querySelectorAll('table tr');
+        for (let i = 1; i < rows.length; i++) {
+            const cells = rows[i].querySelectorAll('td');
+            tableData.push({
+                id: cells[0].textContent,
+                name: cells[1].textContent,
+                value: cells[2].textContent
+            });
+        }
+        return tableData;
+    """
+})
+
+# Close the browser when done
+client.call_tool("playwright_close_browser", {
+    "browser_id": browser_id
+})
+
+# --- Browserbase Alternative (Cloud-based browser) ---
+# Create a new cloud browser session
+session = client.call_tool("browserbase_create_session", {
+    "sessionId": "cloud-browser-1"
+})
+
+# Navigate to a website
+client.call_tool("browserbase_navigate", {
+    "sessionId": "cloud-browser-1",
+    "url": "https://example.com/form"
+})
+
+# Fill out a form
+client.call_tool("browserbase_fill", {
+    "sessionId": "cloud-browser-1",
+    "selector": "input[name='email']",
+    "value": "test@example.com"
+})
+
+# Take a screenshot
+client.call_tool("browserbase_screenshot", {
+    "sessionId": "cloud-browser-1",
+    "name": "form_screenshot"
+})
+
+# Close the session
+client.call_tool("browserbase_close_session", {
+    "sessionId": "cloud-browser-1"
+})
+```
+
+### Example 5: Building a Complete Workflow
+
+```python
+from mcp.client import MCPClient
+
+# Connect to the MCP server
+client = MCPClient("http://localhost:8000")
+
+# --- Shopify E-Commerce Operations ---
+# Get product information
+products = client.call_tool("shopify_get_products", {"limit": 5})
+
+# Create a new product
+new_product = client.call_tool("shopify_create_product", {
+    "title": "Eco-Friendly Water Bottle",
+    "description": "Stainless steel, BPA-free water bottle that keeps drinks cold for 24 hours.",
+    "variants": [
+        {"price": 24.99, "option1": "Blue"},
+        {"price": 24.99, "option1": "Green"},
+        {"price": 24.99, "option1": "Black"}
+    ],
+    "images": [{"src": "https://example.com/bottle-image.jpg"}]
+})
+
+# Get recent orders
+orders = client.call_tool("shopify_get_orders", {"status": "any", "limit": 10})
+
+# --- QuickBooks Financial Operations ---
+# Get account information
+accounts = client.call_tool("quickbooks_get_accounts", {})
+
+# Get recent invoices
+invoices = client.call_tool("quickbooks_get_invoices", {"limit": 10})
+
+# Create a new invoice
+new_invoice = client.call_tool("quickbooks_create_invoice", {
+    "customer_id": "123",
+    "items": [
+        {"description": "Consulting Services", "amount": 1200.00, "quantity": 5},
+        {"description": "Software License", "amount": 299.99, "quantity": 1}
+    ],
+    "due_date": "2025-04-15"
+})
+
+# Generate a financial report
+report = client.call_tool("quickbooks_get_reports", {
+    "report_type": "ProfitAndLoss",
+    "start_date": "2025-01-01",
+    "end_date": "2025-03-31"
+})
+
+# --- Integrated E-Commerce Analytics Example ---
+# Get Shopify sales data
+shopify_sales = client.call_tool("shopify_get_orders", {
+    "status": "paid", 
+    "created_at_min": "2025-01-01",
+    "created_at_max": "2025-03-31"
+})
+
+# Extract order totals for financial analysis
+order_totals = [order['total_price'] for order in shopify_sales]
+
+# Create invoice records in QuickBooks for reconciliation
+for order in shopify_sales:
+    client.call_tool("quickbooks_create_invoice", {
+        "customer_id": order.get('customer', {}).get('id', 'default'),
+        "items": [
+            {"description": f"Shopify Order #{order['order_number']}", 
+             "amount": order['total_price'],
+             "quantity": 1}
+        ],
+        "txn_date": order['created_at'],
+        "doc_number": f"SHOP-{order['order_number']}"
+    })
+```
+
 ## Using with Claude Desktop App
 
 The mcptoolkit can be easily integrated with the Claude desktop application to enhance Claude's capabilities with external tools.
@@ -265,7 +457,9 @@ Once set up, you can ask Claude to use the tools with prompts like:
 
 - "Search the web for the latest AI research papers and summarize the findings."
 - "Create a PowerPoint presentation about climate change with three slides."
-- "What's the current stock price of Microsoft?"
+- "Download my QuickBooks invoice data and analyze our revenue for the past quarter."
+- "Set up a product on my Shopify store with these details and pricing."
+- "Use browser automation to fill out this form at [website URL]."
 - "Read the text file in my Downloads folder named 'project_notes.txt'."
 - "Get the latest news headlines about technology."
 
@@ -449,6 +643,43 @@ Access the UI in your web browser at http://localhost:8501
 - `get_file_info`: Get file metadata
 - `list_allowed_directories`: List allowed directories
 
+### Browser Automation Tools
+- **Browserbase:**
+  - `browserbase_create_session`: Create a new browser session
+  - `browserbase_close_session`: Close a browser session
+  - `browserbase_navigate`: Navigate to a URL
+  - `browserbase_screenshot`: Take a screenshot
+  - `browserbase_click`: Click an element
+  - `browserbase_fill`: Fill a form field
+  - `browserbase_evaluate`: Execute JavaScript
+  - `browserbase_get_content`: Extract page content
+
+- **Playwright:**
+  - `playwright_launch_browser`: Launch a new browser instance
+  - `playwright_navigate`: Navigate to a URL
+  - `playwright_screenshot`: Take a screenshot
+  - `playwright_click`: Click on an element
+  - `playwright_fill`: Fill an input field
+  - `playwright_evaluate`: Execute JavaScript
+  - `playwright_get_content`: Get the HTML content of a page
+
+### E-Commerce Tools
+- **Shopify:**
+  - `shopify_get_products`: Get product information
+  - `shopify_create_product`: Create a new product
+  - `shopify_update_product`: Update an existing product
+  - `shopify_get_orders`: Get order information
+  - `shopify_create_order`: Create a new order
+  - `shopify_get_customers`: Get customer information
+
+### Financial Tools
+- **QuickBooks:**
+  - `quickbooks_get_accounts`: Get account information
+  - `quickbooks_get_invoices`: Get invoice information
+  - `quickbooks_create_invoice`: Create an invoice
+  - `quickbooks_get_customers`: Get customer information
+  - `quickbooks_get_reports`: Generate financial reports
+
 ### Time Tools
 - `get_current_time`: Get current time in a specified timezone
 - `convert_time`: Convert time between timezones
@@ -459,16 +690,6 @@ Access the UI in your web browser at http://localhost:8501
 ### Brave Search
 - `brave_web_search`: Perform web searches
 - `brave_local_search`: Search for local businesses and places
-
-### Browserbase
-- `browserbase_create_session`: Create a new browser session
-- `browserbase_close_session`: Close a browser session
-- `browserbase_navigate`: Navigate to a URL
-- `browserbase_screenshot`: Take a screenshot
-- `browserbase_click`: Click an element
-- `browserbase_fill`: Fill a form field
-- `browserbase_evaluate`: Execute JavaScript
-- `browserbase_get_content`: Extract page content
 
 ### World Bank API
 - `worldbank_get_indicator`: Get indicator data for a country
