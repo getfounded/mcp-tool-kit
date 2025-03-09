@@ -27,6 +27,8 @@ The MCP Unified Server provides a unified interface for Claude to interact with 
 - **Excel**: Create and manipulate Excel spreadsheets
 - **QuickBooks**: Financial and accounting operations
 - **Shopify**: E-commerce platform integration
+- **Yahoo Finance**: Stock market and financial data
+- **FRED**: Federal Reserve Economic Data
 - **And many more specialized tools**
 
 ## Usage Examples
@@ -459,6 +461,8 @@ Once set up, you can ask Claude to use the tools with prompts like:
 - "Create a PowerPoint presentation about climate change with three slides."
 - "Download my QuickBooks invoice data and analyze our revenue for the past quarter."
 - "Set up a product on my Shopify store with these details and pricing."
+- "Get the current stock price and historical data for Tesla using Yahoo Finance."
+- "Analyze inflation trends using FRED economic data for the past 5 years."
 - "Use browser automation to fill out this form at [website URL]."
 - "Read the text file in my Downloads folder named 'project_notes.txt'."
 - "Get the latest news headlines about technology."
@@ -679,6 +683,23 @@ Access the UI in your web browser at http://localhost:8501
   - `quickbooks_create_invoice`: Create an invoice
   - `quickbooks_get_customers`: Get customer information
   - `quickbooks_get_reports`: Generate financial reports
+
+### Financial Data Tools
+- **Yahoo Finance:**
+  - `yfinance`: Get stock quotes and historical data
+  - `yfinance_get_quote`: Get current stock quote
+  - `yfinance_get_history`: Get historical stock data
+  - `yfinance_get_info`: Get detailed company information
+  - `yfinance_get_options`: Get options chain data
+  - `yfinance_get_recommendations`: Get analyst recommendations
+
+- **FRED (Federal Reserve Economic Data):**
+  - `fred_get_series`: Get economic data series
+  - `fred_get_series_info`: Get metadata about a series
+  - `fred_search`: Search for economic data series
+  - `fred_get_category`: Browse data by category
+  - `fred_get_releases`: Get economic data releases
+  - `fred_get_sources`: Get data sources
 
 ### Time Tools
 - `get_current_time`: Get current time in a specified timezone
