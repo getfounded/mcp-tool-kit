@@ -1,4 +1,4 @@
-# MCP Unified Server
+# MCP Tool Kit
 
 A modular server implementation for Claude AI assistants with a variety of integrated tools, enabling Claude to perform actions and access external resources.
 
