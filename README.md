@@ -54,6 +54,32 @@ The MCP (Model Context Protocol) toolkit allows you to create custom tools that 
 - Basic Python knowledge
 - Docker (recommended)
 
+### Get Started ASAP | Running the Server
+Caution: This will grant claude access to every tool without limitation in the main branch of this repository.
+
+```bash
+# Method 1: Using Docker (recommended)
+docker run -p 8000:8000 -v ~/documents:/app/documents getfounded/mcp-tool-kit:latest
+
+# Method 2: Using docker-compose
+docker-compose up
+
+# Method 3: Using command-line entry point (if installed via pip)
+mcptoolkit-server
+
+# Method 4: Launch both server and configuration UI
+mcptoolkit-launcher
+```
+
+```python
+# Method 5: Using Python module
+from mcptoolkit import mcp_unified_server
+
+# Create and run the server with default settings
+server = mcp_unified_server.create_server()
+server.start()
+```
+
 ## Step-by-Step Implementation Guide
 
 ### Step 1: Set Up Your MCP Server with the Toolkit
@@ -302,30 +328,7 @@ client.call_tool("analyze_seo", {"url": "https://example.com"})
 
 ## Other Usage Examples
 
-### Example 1: Running the Server
 
-```bash
-# Method 1: Using Docker (recommended)
-docker run -p 8000:8000 -v ~/documents:/app/documents getfounded/mcp-tool-kit:latest
-
-# Method 2: Using docker-compose
-docker-compose up
-
-# Method 3: Using command-line entry point (if installed via pip)
-mcptoolkit-server
-
-# Method 4: Launch both server and configuration UI
-mcptoolkit-launcher
-```
-
-```python
-# Method 5: Using Python module
-from mcptoolkit import mcp_unified_server
-
-# Create and run the server with default settings
-server = mcp_unified_server.create_server()
-server.start()
-```
 
 ### Example 2: Practical Tool Examples
 
