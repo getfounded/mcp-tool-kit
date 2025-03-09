@@ -6,6 +6,9 @@ A modular server implementation for Claude AI assistants with a variety of integ
 [![Python versions](https://img.shields.io/pypi/pyversions/mcptoolkit.svg)](https://pypi.org/project/mcptoolkit/)
 [![License](https://img.shields.io/github/license/getfounded/mcp-tool-kit.svg)](https://github.com/getfounded/mcp-tool-kit/blob/main/LICENSE)
 
+## MCP Connect | MCP Cloud Tool Kit (Coming Soon)
+Connect with a simple api key to access all of the tools. 
+
 ## Quick Install
 
 ```bash
