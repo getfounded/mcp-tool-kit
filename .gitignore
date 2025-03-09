@@ -1,2 +1,5 @@
 .venv
 .env
+build_and_uploaad.py
+setup.py
+fix_upload.py
