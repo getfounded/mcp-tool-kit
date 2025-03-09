@@ -139,11 +139,33 @@ def register_all_tools(server):
 
 ### Step 4: Configure Claude Desktop to Access Your Tool
 
-1. Restart the MCP server with your new tool integrated
-2. Open Claude Desktop app
-3. Go to Settings > Tools
-4. Add the MCP server URL (`http://localhost:8000`)
-5. Save the configuration
+1. Open Claude Desktop app
+2. Go to File > Settings > Developer > Edit config
+3. Add the 'claude_desktop_configuration.json' file
+4. Save the configuration
+5. Restart the MCP server with your new tool integrated
+6. Restart and Open Claude Desktop app
+
+## Example: Claude Desktop Configuration
+
+The repository includes a sample Claude desktop configuration file (`claude_desktop_config.json`) that you can use:
+
+```json
+{
+  "tools": [
+    {
+      "name": "MCP Toolkit",
+      "url": "http://localhost:8000"
+    }
+  ],
+  "settings": {
+    "allowed_directories": ["~/Documents", "~/Downloads"],
+    "default_tools": ["MCP Toolkit"]
+  }
+}
+```
+
+You can import this configuration in the Claude desktop app or use it as a reference to create your own.
 
 ### Step 5: Create Prompts to Help Claude Use Your Tool
 
@@ -480,27 +502,6 @@ Once set up, you can ask Claude to use the tools with prompts like:
 - "Use browser automation to fill out this form at [website URL]."
 - "Read the text file in my Downloads folder named 'project_notes.txt'."
 - "Get the latest news headlines about technology."
-
-### Example: Claude Desktop Configuration
-
-The repository includes a sample Claude desktop configuration file (`claude_desktop_config.json`) that you can use:
-
-```json
-{
-  "tools": [
-    {
-      "name": "MCP Toolkit",
-      "url": "http://localhost:8000"
-    }
-  ],
-  "settings": {
-    "allowed_directories": ["~/Documents", "~/Downloads"],
-    "default_tools": ["MCP Toolkit"]
-  }
-}
-```
-
-You can import this configuration in the Claude desktop app or use it as a reference to create your own.
 
 ## Architecture
 
