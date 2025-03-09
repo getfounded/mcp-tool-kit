@@ -31,7 +31,254 @@ The MCP Unified Server provides a unified interface for Claude to interact with 
 - **FRED**: Federal Reserve Economic Data
 - **And many more specialized tools**
 
-## Usage Examples
+# Building Custom Tools for Claude with MCP Toolkit
+
+This guide demonstrates how to create custom tools that Claude can use via the Model Context Protocol (MCP) toolkit.
+
+## Table of Contents
+- [Overview](#overview)
+- [Prerequisites](#prerequisites)
+- [Step-by-Step Implementation Guide](#step-by-step-implementation-guide)
+- [Example: Creating a Custom SEO Analysis Tool](#example-creating-a-custom-seo-analysis-tool)
+- [Usage with Claude](#usage-with-claude)
+- [Troubleshooting](#troubleshooting)
+
+## Overview
+
+The MCP (Model Context Protocol) toolkit allows you to create custom tools that Claude can access and use. This enables Claude to perform specialized actions beyond its built-in capabilities, such as interacting with your specific business systems, analyzing data with custom algorithms, or controlling specialized hardware.
+
+## Prerequisites
+
+- MCP toolkit installed (`pip install mcptoolkit` or Docker setup)
+- Access to Claude Desktop app
+- Basic Python knowledge
+- Docker (recommended)
+
+## Step-by-Step Implementation Guide
+
+### Step 1: Set Up Your MCP Server with the Toolkit
+
+Start by running the MCP server:
+
+```bash
+# Using Docker (recommended)
+docker run -p 8000:8000 -v ~/documents:/app/documents -v ~/downloads:/app/downloads getfounded/mcp-tool-kit:latest
+
+# Or if installed via pip
+mcptoolkit-server
+```
+
+### Step 2: Create Your Custom Tool
+
+Create a new Python file in the tools directory of the MCP toolkit (e.g., `my_custom_tool.py`):
+
+```python
+from mcp import tools
+
+# Store reference to external MCP to be set from mcp_unified_server.py
+external_mcp = None
+
+def set_external_mcp(mcp):
+    global external_mcp
+    external_mcp = mcp
+
+# Create your service class
+class MyCustomToolService:
+    def __init__(self):
+        # Initialize any resources or connections here
+        self.some_resource = {}
+    
+    # Define your tool functionality
+    def perform_custom_action(self, parameter1, parameter2):
+        # Implement your custom functionality
+        result = f"Processed {parameter1} with {parameter2}"
+        return result
+
+# Create a service instance
+service = MyCustomToolService()
+
+# Define tool wrapper functions
+def my_custom_tool(params):
+    """
+    Performs a custom action.
+    
+    params:
+        parameter1: First parameter description
+        parameter2: Second parameter description
+    """
+    parameter1 = params.get("parameter1", "default")
+    parameter2 = params.get("parameter2", "default")
+    
+    return service.perform_custom_action(parameter1, parameter2)
+
+# Register your tools with MCP
+def register_tools(mcp):
+    set_external_mcp(mcp)
+    mcp.register_tool("my_custom_tool", my_custom_tool)
+```
+
+### Step 3: Register Your Tool with the MCP Server
+
+Modify the main MCP server file to import and register your tool:
+
+```python
+# Option 1: Update mcp_unified_server.py
+from tools import my_custom_tool
+
+# Add to the list of tools to register
+tools_modules = [
+    # existing tools...
+    my_custom_tool,
+]
+
+# Option 2: Update tools/__init__.py to include your tool in register_all_tools
+def register_all_tools(server):
+    # existing tool registrations...
+    my_custom_tool.register_tools(server)
+```
+
+### Step 4: Configure Claude Desktop to Access Your Tool
+
+1. Restart the MCP server with your new tool integrated
+2. Open Claude Desktop app
+3. Go to Settings > Tools
+4. Add the MCP server URL (`http://localhost:8000`)
+5. Save the configuration
+
+### Step 5: Create Prompts to Help Claude Use Your Tool
+
+Create example prompts for Claude that demonstrate how to use your custom tool:
+
+```
+Claude, I've created a custom tool that can perform [specific action]. 
+Here's an example of how to use it:
+
+client.call_tool("my_custom_tool", {
+    "parameter1": "value1",
+    "parameter2": "value2"
+})
+
+Could you please use this tool to [describe what you want Claude to do]?
+```
+
+## Example: Creating a Custom SEO Analysis Tool
+
+Here's a complete example of creating an SEO analysis tool:
+
+```python
+# seo_tool.py
+from mcp import tools
+import requests
+from bs4 import BeautifulSoup
+
+external_mcp = None
+
+def set_external_mcp(mcp):
+    global external_mcp
+    external_mcp = mcp
+
+class SEOAnalyzer:
+    def analyze_url(self, url):
+        try:
+            # Fetch the page
+            response = requests.get(url)
+            soup = BeautifulSoup(response.text, 'html.parser')
+            
+            # Extract SEO elements
+            title = soup.title.string if soup.title else ""
+            meta_desc = soup.find("meta", {"name": "description"})
+            meta_desc = meta_desc["content"] if meta_desc else ""
+            
+            # Count headings
+            h1_count = len(soup.find_all('h1'))
+            h2_count = len(soup.find_all('h2'))
+            
+            # Basic analysis
+            result = {
+                "title": title,
+                "title_length": len(title),
+                "meta_description": meta_desc,
+                "meta_description_length": len(meta_desc),
+                "h1_count": h1_count,
+                "h2_count": h2_count,
+                "issues": []
+            }
+            
+            # Identify issues
+            if len(title) < 30 or len(title) > 60:
+                result["issues"].append("Title length not optimal (should be 30-60 chars)")
+            
+            if len(meta_desc) < 120 or len(meta_desc) > 160:
+                result["issues"].append("Meta description length not optimal (should be 120-160 chars)")
+            
+            if h1_count != 1:
+                result["issues"].append(f"Page has {h1_count} H1 tags (should have exactly 1)")
+            
+            return result
+            
+        except Exception as e:
+            return {"error": str(e)}
+
+service = SEOAnalyzer()
+
+def analyze_seo(params):
+    """
+    Analyzes a URL for basic SEO factors.
+    
+    params:
+        url: The URL to analyze
+    """
+    url = params.get("url", "")
+    if not url:
+        return {"error": "URL parameter is required"}
+    
+    return service.analyze_url(url)
+
+def register_tools(mcp):
+    set_external_mcp(mcp)
+    mcp.register_tool("analyze_seo", analyze_seo)
+```
+
+## Usage with Claude
+
+Once your custom tool is integrated, you can ask Claude to use it:
+
+### Example Prompt for SEO Tool
+```
+Claude, I've added an SEO analysis tool to your toolkit. Can you please analyze the SEO for my website at https://example.com and provide recommendations for improvement?
+
+The tool can be accessed using:
+client.call_tool("analyze_seo", {"url": "https://example.com"})
+```
+
+### Example Prompts for Other Custom Tools
+
+1. **Custom Database Tool**:
+   ```
+   Claude, I've created a tool that can query our product database. Can you use the tool to find all products in the "electronics" category priced under $100?
+   
+   The tool can be accessed using:
+   client.call_tool("query_database", {"category": "electronics", "max_price": 100})
+   ```
+
+2. **API Integration Tool**:
+   ```
+   Claude, I've set up a weather API tool. Can you check the weather forecast for New York for the next 3 days?
+   
+   The tool can be accessed using:
+   client.call_tool("get_weather", {"location": "New York", "days": 3})
+   ```
+
+## Troubleshooting
+
+- **Tool Not Found**: Ensure your tool is properly registered and the server is restarted
+- **Parameter Errors**: Check that all required parameters are being passed correctly
+- **Connection Issues**: Verify the MCP server is running and Claude is properly configured to connect to it
+- **Import Errors**: Make sure all dependencies for your custom tool are installed in the environment where the MCP server runs
+
+---
+
+## Other Usage Examples
 
 ### Example 1: Running the Server
 
@@ -119,7 +366,7 @@ client.call_tool("sequentialthinking", {
 })
 ```
 
-### Example 5: Building a Complete Workflow
+### Example 3: Building a Complete Workflow
 
 ```python
 from mcp.client import MCPClient
@@ -220,239 +467,6 @@ def run_market_research(company_name, market_sector):
 # Execute the research function
 research_folder = run_market_research("Acme Corp", "technology")
 ```
-
-```python
-from mcp.client import MCPClient
-
-# Connect to the MCP server
-client = MCPClient("http://localhost:8000")
-
-# --- Playwright Browser Automation ---
-# Launch a new browser
-browser_info = client.call_tool("playwright_launch_browser", {
-    "browser_type": "chromium",
-    "headless": False  # Set to True for headless operation
-})
-
-# Store the browser_id for future operations
-browser_id = browser_info["browser_id"]
-page_id = browser_info["page_id"]
-
-# Navigate to a website
-client.call_tool("playwright_navigate", {
-    "page_id": page_id,
-    "url": "https://example.com/login"
-})
-
-# Fill login form
-client.call_tool("playwright_fill", {
-    "page_id": page_id,
-    "selector": "#username",
-    "value": "user@example.com"
-})
-
-client.call_tool("playwright_fill", {
-    "page_id": page_id,
-    "selector": "#password",
-    "value": "password123"
-})
-
-# Click login button
-client.call_tool("playwright_click", {
-    "page_id": page_id,
-    "selector": "#login-button"
-})
-
-# Wait for navigation to complete
-client.call_tool("playwright_wait_for_navigation", {
-    "page_id": page_id
-})
-
-# Take screenshot of dashboard
-client.call_tool("playwright_screenshot", {
-    "page_id": page_id,
-    "path": "dashboard.png"
-})
-
-# Extract data from the page
-dashboard_content = client.call_tool("playwright_get_content", {
-    "page_id": page_id
-})
-
-# Execute JavaScript to extract data
-data = client.call_tool("playwright_evaluate", {
-    "page_id": page_id,
-    "expression": """
-        // Get all table data as a JavaScript object
-        const tableData = [];
-        const rows = document.querySelectorAll('table tr');
-        for (let i = 1; i < rows.length; i++) {
-            const cells = rows[i].querySelectorAll('td');
-            tableData.push({
-                id: cells[0].textContent,
-                name: cells[1].textContent,
-                value: cells[2].textContent
-            });
-        }
-        return tableData;
-    """
-})
-
-# Close the browser when done
-client.call_tool("playwright_close_browser", {
-    "browser_id": browser_id
-})
-
-# --- Browserbase Alternative (Cloud-based browser) ---
-# Create a new cloud browser session
-session = client.call_tool("browserbase_create_session", {
-    "sessionId": "cloud-browser-1"
-})
-
-# Navigate to a website
-client.call_tool("browserbase_navigate", {
-    "sessionId": "cloud-browser-1",
-    "url": "https://example.com/form"
-})
-
-# Fill out a form
-client.call_tool("browserbase_fill", {
-    "sessionId": "cloud-browser-1",
-    "selector": "input[name='email']",
-    "value": "test@example.com"
-})
-
-# Take a screenshot
-client.call_tool("browserbase_screenshot", {
-    "sessionId": "cloud-browser-1",
-    "name": "form_screenshot"
-})
-
-# Close the session
-client.call_tool("browserbase_close_session", {
-    "sessionId": "cloud-browser-1"
-})
-```
-
-### Example 5: Building a Complete Workflow
-
-```python
-from mcp.client import MCPClient
-
-# Connect to the MCP server
-client = MCPClient("http://localhost:8000")
-
-# --- Shopify E-Commerce Operations ---
-# Get product information
-products = client.call_tool("shopify_get_products", {"limit": 5})
-
-# Create a new product
-new_product = client.call_tool("shopify_create_product", {
-    "title": "Eco-Friendly Water Bottle",
-    "description": "Stainless steel, BPA-free water bottle that keeps drinks cold for 24 hours.",
-    "variants": [
-        {"price": 24.99, "option1": "Blue"},
-        {"price": 24.99, "option1": "Green"},
-        {"price": 24.99, "option1": "Black"}
-    ],
-    "images": [{"src": "https://example.com/bottle-image.jpg"}]
-})
-
-# Get recent orders
-orders = client.call_tool("shopify_get_orders", {"status": "any", "limit": 10})
-
-# --- QuickBooks Financial Operations ---
-# Get account information
-accounts = client.call_tool("quickbooks_get_accounts", {})
-
-# Get recent invoices
-invoices = client.call_tool("quickbooks_get_invoices", {"limit": 10})
-
-# Create a new invoice
-new_invoice = client.call_tool("quickbooks_create_invoice", {
-    "customer_id": "123",
-    "items": [
-        {"description": "Consulting Services", "amount": 1200.00, "quantity": 5},
-        {"description": "Software License", "amount": 299.99, "quantity": 1}
-    ],
-    "due_date": "2025-04-15"
-})
-
-# Generate a financial report
-report = client.call_tool("quickbooks_get_reports", {
-    "report_type": "ProfitAndLoss",
-    "start_date": "2025-01-01",
-    "end_date": "2025-03-31"
-})
-
-# --- Integrated E-Commerce Analytics Example ---
-# Get Shopify sales data
-shopify_sales = client.call_tool("shopify_get_orders", {
-    "status": "paid", 
-    "created_at_min": "2025-01-01",
-    "created_at_max": "2025-03-31"
-})
-
-# Extract order totals for financial analysis
-order_totals = [order['total_price'] for order in shopify_sales]
-
-# Create invoice records in QuickBooks for reconciliation
-for order in shopify_sales:
-    client.call_tool("quickbooks_create_invoice", {
-        "customer_id": order.get('customer', {}).get('id', 'default'),
-        "items": [
-            {"description": f"Shopify Order #{order['order_number']}", 
-             "amount": order['total_price'],
-             "quantity": 1}
-        ],
-        "txn_date": order['created_at'],
-        "doc_number": f"SHOP-{order['order_number']}"
-    })
-```
-
-## Using with Claude Desktop App
-
-The mcptoolkit can be easily integrated with the Claude desktop application to enhance Claude's capabilities with external tools.
-
-### Quick Setup for Claude Desktop (Docker Method - Recommended)
-
-1. **Run using Docker** (easiest and recommended):
-   ```bash
-   # Pull and run the Docker image
-   docker run -p 8000:8000 -v ~/documents:/app/documents -v ~/downloads:/app/downloads getfounded/mcp-tool-kit:latest
-   ```
-   
-   This will start the server and expose it on port 8000. The `-v` flags mount your local directories to make them accessible to the toolkit.
-
-2. **Configure Claude Desktop**:
-   - Open the Claude desktop app
-   - Go to Settings > Tools
-   - Click "Add Tool"
-   - Add the MCP server URL: `http://localhost:8000`
-   - Save the configuration
-
-3. **Start chatting with Claude**:
-   - Claude will now have access to all the tools provided by mcptoolkit
-   - You can ask Claude to search the web, create presentations, analyze data, and more
-
-### Alternative: Setup without Docker
-
-If you prefer not to use Docker, you can install and run the toolkit directly:
-
-1. **Install the toolkit**:
-   ```bash
-   pip install mcptoolkit
-   ```
-
-2. **Start the MCP server**:
-   ```bash
-   mcptoolkit-server
-   ```
-   
-   By default, the server will run on `http://localhost:8000`.
-
-3. Then continue with the Claude Desktop configuration as described above.
-
 ### Sample Claude Prompts
 
 Once set up, you can ask Claude to use the tools with prompts like:
