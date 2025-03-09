@@ -17,12 +17,9 @@ if not dist_files:
 
 print(f"Created distribution files: {dist_files}")
 
-# Upload to repository
-print("Uploading to repository...")
-# Replace with your actual repository URL
-repository_url = "https://github.com/getfounded/mcp-tool-kit"
+# Upload to PyPI
+print("Uploading to PyPI...")
 subprocess.run([
     "python", "-m", "twine", "upload",
-    "--repository-url", repository_url,
     "dist/*"
 ])
