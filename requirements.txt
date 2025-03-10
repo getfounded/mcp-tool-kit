@@ -11,6 +11,7 @@ nltk
 msal
 psutil
 simple_salesforce
+streamlit
 seaborn
 matplotlib
 pdf2image

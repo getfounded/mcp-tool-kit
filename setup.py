@@ -11,7 +11,7 @@ with open("requirements.txt", encoding="utf-8") as f:
 
 setup(
     name="mcptoolkit",
-    version="0.1.0",
+    version="1.0.0",
     author="getfounded",
     author_email="",  # Add author email if available
     description="A modular server implementation for Claude AI assistants with integrated tools",
@@ -25,6 +25,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Development Status :: 4 - Beta",

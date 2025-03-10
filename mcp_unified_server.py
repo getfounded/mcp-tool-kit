@@ -61,41 +61,6 @@ except ImportError as e:
     ppt_available = False
     logging.warning(f"Could not load PowerPoint tools: {e}")
 
-# Initialize Browserbase tools
-try:
-    from tools.browserbase import get_browserbase_tools, get_browserbase_resources, set_external_mcp, initialize_browserbase_service
-
-    # Pass our MCP instance to the browserbase module
-    set_external_mcp(mcp)
-
-    # Initialize browserbase tools with API keys from environment variables
-    browserbase_api_key = os.environ.get("BROWSERBASE_API_KEY")
-    browserbase_project_id = os.environ.get("BROWSERBASE_PROJECT_ID")
-
-    if browserbase_api_key and browserbase_project_id:
-        initialize_browserbase_service(
-            browserbase_api_key, browserbase_project_id)
-
-        # Register browserbase tools
-        browserbase_tools = get_browserbase_tools()
-        for tool_name, tool_func in browserbase_tools.items():
-            # Register each browserbase tool with the main MCP instance
-            mcp.tool(name=tool_name)(tool_func)
-
-        # Register browserbase resources
-        browserbase_resources = get_browserbase_resources()
-        for resource_path, resource_func in browserbase_resources.items():
-            # Register each browserbase resource with the main MCP instance
-            mcp.resource(resource_path)(resource_func)
-
-        logging.info("Browserbase tools registered successfully.")
-    else:
-        logging.warning(
-            "Browserbase API keys not configured. Browserbase tools will not be available.")
-except ImportError as e:
-    logging.warning(f"Could not load Browserbase tools: {e}")
-
-
 # Initialize Playwright tools
 try:
     from tools.browser_automation import get_playwright_tools, set_external_mcp, initialize
@@ -192,6 +157,90 @@ try:
     logging.info("Sequential Thinking tools registered successfully.")
 except ImportError as e:
     logging.warning(f"Could not load Sequential Thinking tools: {e}")
+
+# Initialize FRED API tools
+try:
+    from tools.fred import get_fred_api_tools, set_external_mcp, initialize_fred_api_service, initialize
+
+    # Pass our MCP instance to the FRED module
+    set_external_mcp(mcp)
+
+    # Initialize FRED tools with API key from environment variable
+    fred_api_key = os.environ.get("FRED_API_KEY")
+    if fred_api_key:
+        # Call the module's initialize function
+        initialize(mcp)
+
+        # Register FRED tools
+        fred_tools = get_fred_api_tools()
+        for tool_name, tool_func in fred_tools.items():
+            # Register each FRED tool with the main MCP instance
+            mcp.tool(name=tool_name)(tool_func)
+
+        logging.info("FRED API tools registered successfully.")
+    else:
+        logging.warning(
+            "FRED API key not configured. FRED API tools will not be available.")
+except ImportError as e:
+    logging.warning(f"Could not load FRED API tools: {e}")
+
+# Initialize YFinance tools
+try:
+    from tools.yfinance import get_yfinance_tools, set_external_mcp, initialize
+
+    # Pass our MCP instance to the yfinance module
+    set_external_mcp(mcp)
+
+    # Initialize YFinance tools
+    if initialize(mcp):
+        # Register YFinance tools
+        yfinance_tools = get_yfinance_tools()
+        for tool_name, tool_func in yfinance_tools.items():
+            # Register each YFinance tool with the main MCP instance
+            tool_name_str = tool_name if isinstance(
+                tool_name, str) else tool_name.value
+            mcp.tool(name=tool_name_str)(tool_func)
+
+        # Add YFinance dependencies to MCP dependencies
+        mcp.dependencies.extend(["yfinance", "pandas", "numpy"])
+
+        logging.info("YFinance tools registered successfully.")
+    else:
+        logging.warning("Failed to initialize YFinance tools.")
+except ImportError as e:
+    logging.warning(f"Could not load YFinance tools: {e}")
+
+# Initialize Streamlit tools
+try:
+    from tools.streamlit import get_streamlit_tools, set_external_mcp, initialize
+
+    # Pass our MCP instance to the streamlit module
+    set_external_mcp(mcp)
+
+    # Initialize Streamlit tools
+    # Get custom apps directory from environment variable if set
+    apps_dir = os.environ.get("STREAMLIT_APPS_DIR")
+
+    if initialize(mcp):
+        # Register Streamlit tools
+        streamlit_tools = get_streamlit_tools()
+        for tool_name, tool_func in streamlit_tools.items():
+            # Register each Streamlit tool with the main MCP instance
+            tool_name_str = tool_name if isinstance(
+                tool_name, str) else tool_name.value
+            mcp.tool(name=tool_name_str)(tool_func)
+
+        # Add Streamlit dependencies to MCP dependencies
+        mcp.dependencies.extend(
+            ["streamlit", "pandas", "numpy", "matplotlib", "plotly"])
+
+        logging.info("Streamlit tools registered successfully.")
+    else:
+        logging.warning(
+            "Failed to initialize Streamlit tools. Make sure streamlit is installed.")
+except ImportError as e:
+    logging.warning(f"Could not load Streamlit tools: {e}")
+
 
 # Initialize Brave Search tools
 try:
