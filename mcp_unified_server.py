@@ -7,19 +7,14 @@ from datetime import datetime
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 import logging
-import importlib
-import traceback
 
 # MCP SDK imports
 from mcp.server.fastmcp import FastMCP, Context, Image
 from mcp.types import Tool, TextContent, ImageContent
 
-# Import configuration loader
-from config_loader import load_config, is_tool_enabled, get_tool_config, create_default_config
-
-# Set up logging
 logging.basicConfig(
-    level=logging.DEBUG if os.environ.get("MCP_LOG_LEVEL", "").lower() == "debug" else logging.INFO,
+    level=logging.DEBUG if os.environ.get(
+        "MCP_LOG_LEVEL", "").lower() == "debug" else logging.INFO,
     format='%(asctime)s [%(levelname)s] %(message)s',
     stream=sys.stderr
 )
@@ -31,11 +26,6 @@ sys.path.append(str(tools_path))
 # Load environment variables
 load_dotenv()
 
-# Load configuration
-config_path = Path(__file__).parent / "config.yaml"
-create_default_config(config_path)  # Create default config if it doesn't exist
-config = load_config(config_path)
-
 # Initialize MCP server
 mcp = FastMCP(
     "Unified MCP Server",
@@ -43,136 +33,273 @@ mcp = FastMCP(
                   "httpx", "pillow", "requests", "pandas", "python-pptx", "nltk"]
 )
 
-# Function to dynamically load and register tool modules
-def load_tool_module(module_name):
-    """Dynamically load a tool module if it's enabled in configuration"""
-    if not is_tool_enabled(config, module_name):
-        logging.info(f"Tool '{module_name}' is disabled in configuration, skipping")
-        return False
-    
-    try:
-        # Import the module
-        module = importlib.import_module(f"tools.{module_name}")
-        
-        # Set external MCP instance if the module has this function
-        if hasattr(module, "set_external_mcp"):
-            module.set_external_mcp(mcp)
-        
-        # Get module-specific config
-        module_config = get_tool_config(config, module_name)
-        
-        # Initialize the module if it has an initialize function
-        initialization_successful = True
-        if hasattr(module, "initialize"):
-            try:
-                # Pass MCP instance and any module-specific config
-                initialization_successful = module.initialize(mcp, **module_config)
-            except TypeError:
-                # Fall back to just passing MCP if module doesn't accept config
-                initialization_successful = module.initialize(mcp)
-        
-        if not initialization_successful:
-            logging.warning(f"Module '{module_name}' initialization returned False, skipping registration")
-            return False
-        
-        # Register tools through different methods depending on module structure
-        tools_registered = False
-        
-        # Method 1: Use get_X_tools() function (most modules)
-        tools_getter_name = f"get_{module_name}_tools"
-        if hasattr(module, tools_getter_name):
-            tools_getter = getattr(module, tools_getter_name)
-            tools = tools_getter()
-            
-            for tool_name, tool_func in tools.items():
-                tool_name_str = tool_name if isinstance(tool_name, str) else tool_name.value
-                mcp.tool(name=tool_name_str)(tool_func)
-            
-            tools_registered = True
-            logging.info(f"Registered {len(tools)} tools from '{module_name}' using {tools_getter_name}()")
-        
-        # Method 2: Direct tool definition in module
-        elif hasattr(module, "tools"):
-            tools = module.tools
-            for tool_name, tool_func in tools.items():
-                tool_name_str = tool_name if isinstance(tool_name, str) else tool_name.value
-                mcp.tool(name=tool_name_str)(tool_func)
-            
-            tools_registered = True
-            logging.info(f"Registered {len(tools)} tools from '{module_name}' using module.tools")
-        
-        # Register resources if the module has them
-        resources_registered = False
-        resources_getter_name = f"get_{module_name}_resources"
-        if hasattr(module, resources_getter_name):
-            resources_getter = getattr(module, resources_getter_name)
-            resources = resources_getter()
-            
-            for resource_path, resource_func in resources.items():
-                mcp.resource(resource_path)(resource_func)
-            
-            resources_registered = True
-            logging.info(f"Registered {len(resources)} resources from '{module_name}'")
-        
-        if tools_registered or resources_registered:
-            logging.info(f"Successfully loaded module '{module_name}'")
-            return True
-        else:
-            logging.warning(f"No tools or resources found to register in module '{module_name}'")
-            return False
-            
-    except ImportError as e:
-        logging.warning(f"Could not load '{module_name}' tools: {e}")
-        return False
-    except Exception as e:
-        logging.error(f"Error loading '{module_name}' tools: {str(e)}")
-        logging.debug(traceback.format_exc())
-        return False
+# Initialize PowerPoint tools
+try:
+    from tools.ppt import get_ppt_tools, PowerPointTools, set_external_mcp
+    # Pass our MCP instance to the ppt module
+    set_external_mcp(mcp)
+    ppt_available = True
 
-# Define available tool modules - this helps with discovery
-AVAILABLE_TOOLS = [
-    "ppt",
-    "filesystem",
-    "time_tools",
-    "sequential_thinking", 
-    "brave_search",
-    "browserbase",
-    "worldbank",
-    "news_api",
-    "data_analysis", 
-    "document_management",
-    "outlook",
-    "salesforce",
-    "linkedin",
-    "shopify",
-    "yfinance",
-    "excel",
-    "quickbooks",
-]
+    # Register PowerPoint tools
+    ppt_tools = get_ppt_tools()
+
+    for tool_name, tool_func in ppt_tools.items():
+        # Register each PowerPoint tool with the main MCP instance
+        tool_name_str = tool_name if isinstance(
+            tool_name, str) else tool_name.value
+        mcp.tool(name=tool_name_str)(tool_func)
+
+    # Add PowerPoint dependencies to MCP dependencies
+    mcp.dependencies.extend([
+        "python-pptx",
+        "nltk",
+        "pillow"
+    ])
+
+    logging.info("PowerPoint tools registered successfully.")
+except ImportError as e:
+    ppt_available = False
+    logging.warning(f"Could not load PowerPoint tools: {e}")
+
+# Initialize Browserbase tools
+try:
+    from tools.browserbase import get_browserbase_tools, get_browserbase_resources, set_external_mcp, initialize_browserbase_service
+
+    # Pass our MCP instance to the browserbase module
+    set_external_mcp(mcp)
+
+    # Initialize browserbase tools with API keys from environment variables
+    browserbase_api_key = os.environ.get("BROWSERBASE_API_KEY")
+    browserbase_project_id = os.environ.get("BROWSERBASE_PROJECT_ID")
+
+    if browserbase_api_key and browserbase_project_id:
+        initialize_browserbase_service(
+            browserbase_api_key, browserbase_project_id)
+
+        # Register browserbase tools
+        browserbase_tools = get_browserbase_tools()
+        for tool_name, tool_func in browserbase_tools.items():
+            # Register each browserbase tool with the main MCP instance
+            mcp.tool(name=tool_name)(tool_func)
+
+        # Register browserbase resources
+        browserbase_resources = get_browserbase_resources()
+        for resource_path, resource_func in browserbase_resources.items():
+            # Register each browserbase resource with the main MCP instance
+            mcp.resource(resource_path)(resource_func)
+
+        logging.info("Browserbase tools registered successfully.")
+    else:
+        logging.warning(
+            "Browserbase API keys not configured. Browserbase tools will not be available.")
+except ImportError as e:
+    logging.warning(f"Could not load Browserbase tools: {e}")
+
+
+# Initialize Playwright tools
+try:
+    from tools.browser_automation import get_playwright_tools, set_external_mcp, initialize
+
+    # Pass our MCP instance to the playwright module
+    set_external_mcp(mcp)
+
+    # Initialize playwright tools
+    initialize()
+
+    # Register playwright tools
+    playwright_tools = get_playwright_tools()
+    for tool_name, tool_func in playwright_tools.items():
+        # Register each playwright tool with the main MCP instance
+        tool_name_str = tool_name if isinstance(
+            tool_name, str) else tool_name.value
+        mcp.tool(name=tool_name_str)(tool_func)
+
+    # Add Playwright dependencies to MCP dependencies
+    mcp.dependencies.extend([
+        "playwright"
+    ])
+
+    logging.info("Playwright tools registered successfully.")
+except ImportError as e:
+    logging.warning(f"Could not load Playwright tools: {e}")
+
+# Initialize Filesystem tools
+try:
+    from tools.filesystem import get_filesystem_tools, set_external_mcp, initialize_fs_tools
+
+    # Pass our MCP instance to the filesystem module
+    set_external_mcp(mcp)
+
+    # Get allowed directories from environment variable
+    env_dirs = os.environ.get("MCP_FILESYSTEM_DIRS", "")
+    allowed_dirs = [os.path.expanduser(d.strip())
+                    for d in env_dirs.split(",") if d.strip()]
+
+    # Default to user's home directory if no dirs specified
+    if not allowed_dirs:
+        allowed_dirs = [os.path.expanduser("~")]
+
+    initialize_fs_tools(allowed_dirs)
+
+    # Register filesystem tools
+    fs_tools = get_filesystem_tools()
+    for tool_name, tool_func in fs_tools.items():
+        # Register each filesystem tool with the main MCP instance
+        mcp.tool(name=tool_name)(tool_func)
+
+    logging.info("Filesystem tools registered successfully.")
+except ImportError as e:
+    logging.warning(f"Could not load filesystem tools: {e}")
+
+# Initialize Time tools
+try:
+    from tools.time_tools import get_time_tools, set_external_mcp, initialize_time_tools
+
+    # Pass our MCP instance to the time tools module
+    set_external_mcp(mcp)
+
+    # Initialize time tools
+    initialize_time_tools()
+
+    # Register time tools
+    time_tools = get_time_tools()
+    for tool_name, tool_func in time_tools.items():
+        # Register each time tool with the main MCP instance
+        tool_name_str = tool_name if isinstance(
+            tool_name, str) else tool_name.value
+        mcp.tool(name=tool_name_str)(tool_func)
+
+    logging.info("Time tools registered successfully.")
+except ImportError as e:
+    logging.warning(f"Could not load time tools: {e}")
+
+# Initialize Sequential Thinking tools
+try:
+    from tools.sequential_thinking import get_sequential_thinking_tools, set_external_mcp, initialize_thinking_service
+
+    # Pass our MCP instance to the sequential thinking module
+    set_external_mcp(mcp)
+
+    # Initialize sequential thinking tools
+    initialize_thinking_service()
+
+    # Register sequential thinking tools
+    thinking_tools = get_sequential_thinking_tools()
+    for tool_name, tool_func in thinking_tools.items():
+        # Register each sequential thinking tool with the main MCP instance
+        mcp.tool(name=tool_name)(tool_func)
+
+    logging.info("Sequential Thinking tools registered successfully.")
+except ImportError as e:
+    logging.warning(f"Could not load Sequential Thinking tools: {e}")
+
+# Initialize Brave Search tools
+try:
+    from tools.brave_search import get_brave_search_tools, set_external_mcp, initialize_brave_search
+
+    # Pass our MCP instance to the brave search module
+    set_external_mcp(mcp)
+
+    # Initialize brave search tools with API key from environment variable
+    brave_api_key = os.environ.get("BRAVE_API_KEY")
+    if brave_api_key:
+        initialize_brave_search(brave_api_key)
+
+        # Register brave search tools
+        brave_tools = get_brave_search_tools()
+        for tool_name, tool_func in brave_tools.items():
+            # Register each brave search tool with the main MCP instance
+            mcp.tool(name=tool_name)(tool_func)
+
+        logging.info("Brave Search tools registered successfully.")
+    else:
+        logging.warning(
+            "Brave Search API key not configured. Brave Search tools will not be available.")
+except ImportError as e:
+    logging.warning(f"Could not load Brave Search tools: {e}")
+
+# Initialize World Bank tools
+try:
+    from tools.worldbank import get_worldbank_tools, get_worldbank_resources, set_external_mcp, initialize_worldbank_service
+
+    # Pass our MCP instance to the world bank module
+    set_external_mcp(mcp)
+
+    # Initialize world bank tools
+    initialize_worldbank_service()
+
+    # Register world bank tools
+    worldbank_tools = get_worldbank_tools()
+    for tool_name, tool_func in worldbank_tools.items():
+        # Register each world bank tool with the main MCP instance
+        mcp.tool(name=tool_name)(tool_func)
+
+    # Register world bank resources
+    worldbank_resources = get_worldbank_resources()
+    for resource_path, resource_func in worldbank_resources.items():
+        # Register each world bank resource with the main MCP instance
+        mcp.resource(resource_path)(resource_func)
+
+    logging.info("World Bank tools registered successfully.")
+except ImportError as e:
+    logging.warning(f"Could not load World Bank tools: {e}")
+
+# Initialize News API tools
+try:
+    from tools.news_api import get_news_api_tools, set_external_mcp, initialize_news_api_service
+
+    # Pass our MCP instance to the news api module
+    set_external_mcp(mcp)
+
+    # Initialize news api tools with API key from environment variable
+    news_api_key = os.environ.get("NEWS_API_KEY")
+    if news_api_key:
+        initialize_news_api_service(news_api_key)
+
+        # Register news api tools
+        news_api_tools = get_news_api_tools()
+        for tool_name, tool_func in news_api_tools.items():
+            # Register each news api tool with the main MCP instance
+            mcp.tool(name=tool_name)(tool_func)
+
+        logging.info("News API tools registered successfully.")
+    else:
+        logging.warning(
+            "News API key not configured. News API tools will not be available.")
+except ImportError as e:
+    logging.warning(f"Could not load News API tools: {e}")
+
+# Validate required environment variables
+REQUIRED_ENV_VARS = {
+    "BRAVE_API_KEY": "For Brave Search functionality",
+    "BROWSERBASE_API_KEY": "For browser automation functionality",
+    "BROWSERBASE_PROJECT_ID": "For browser automation functionality",
+    "NEWS_API_KEY": "For NewsAPI functionality"
+}
+
+missing_vars = [var for var in REQUIRED_ENV_VARS if not os.environ.get(var)]
+if missing_vars:
+    logging.warning("The following environment variables are missing:")
+    for var in missing_vars:
+        logging.warning(f"  - {var}: {REQUIRED_ENV_VARS[var]}")
+    logging.warning("Some functionality may be limited.")
 
 # Server Lifespan and Startup
+
+
 @asynccontextmanager
 async def server_lifespan(server: FastMCP):
     """Server lifespan manager - initialize and cleanup resources"""
     try:
         # Log startup message
         logging.info("Starting Unified MCP Server...")
-        
-        # Load tool modules
-        loaded_modules = []
-        for module_name in AVAILABLE_TOOLS:
-            if load_tool_module(module_name):
-                loaded_modules.append(module_name)
-        
-        logging.info(f"Loaded {len(loaded_modules)} tool modules: {', '.join(loaded_modules)}")
-            
+
         # Initialize any services that need async initialization
         # (none in our current implementation)
 
         # Pass any shared context to the request handlers
         yield {
-            "startup_time": datetime.now().isoformat(),
-            "loaded_modules": loaded_modules
+            "startup_time": datetime.now().isoformat()
         }
     finally:
         # Cleanup on shutdown
