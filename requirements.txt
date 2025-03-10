@@ -1,4 +1,4 @@
-mcp>=0.4.0  # Specify a minimum version to ensure compatibility
+mcp>=0.4.0
 newsapi-python>=0.2.7
 python-dotenv>=1.0.0
 httpx>=0.25.0
@@ -9,7 +9,14 @@ requests
 python-pptx
 nltk
 msal
-numpy
-httpx
-numpy
-    
+psutil
+simple_salesforce
+seaborn
+matplotlib
+pdf2image
+PyPDF2
+pytesseract
+aiohttp
+playwright>=1.40.0
+setuptools
+fredapi
