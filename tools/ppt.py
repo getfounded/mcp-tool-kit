@@ -166,6 +166,29 @@ class PowerPointManager:
                         shape.text = content
                         break
             
+            # Handle empty content placeholders
+            for shape in slide.shapes:
+                # Check if it's a content placeholder and it's empty
+                if (hasattr(shape, 'is_placeholder') and shape.is_placeholder and
+                    hasattr(shape, 'placeholder_format') and
+                    shape.placeholder_format.type in (2, 3, 7) and  # Content, Text, Body
+                    hasattr(shape, 'text') and not shape.text.strip()):
+                    try:
+                        # First try: Remove the element directly
+                        sp = shape._element
+                        sp.getparent().remove(sp)
+                    except:
+                        try:
+                            # Second try: Hide the shape by setting size to minimal
+                            shape.width = 0
+                            shape.height = 0
+                            # Move it off-slide
+                            shape.left = -10000
+                            shape.top = -10000
+                        except:
+                            # If all else fails, just leave it
+                            pass
+            
             self.active_presentations[session_id]["modified_at"] = datetime.now()
             return f"Added slide with layout index {layout_index}"
         except Exception as e:
