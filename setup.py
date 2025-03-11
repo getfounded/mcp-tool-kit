@@ -13,7 +13,7 @@ setup(
     name="mcptoolkit",
     version="1.0.0",
     author="getfounded",
-    author_email="",  # Add author email if available
+    author_email="jack@pivotplanpro.com",  # Add author email if available
     description="A modular server implementation for Claude AI assistants with integrated tools",
     long_description=long_description,
     long_description_content_type="text/markdown",
