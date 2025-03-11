@@ -34,6 +34,36 @@ mcp = FastMCP(
                   "httpx", "pillow", "requests", "pandas", "python-pptx", "nltk"]
 )
 
+
+@mcp.app.get("/tools")
+async def get_tools():
+    """Return a list of all registered tools for client discovery."""
+    tool_list = []
+
+    # If the MCP SDK stores tools in its instance, we can extract them
+    for tool_name, tool_func in mcp.registered_tools.items():
+        tool_info = {
+            "name": tool_name,
+            "description": getattr(tool_func, "__doc__", "No description available")
+        }
+
+        # Add parameter information if available
+        if hasattr(tool_func, "__annotations__"):
+            tool_info["parameters"] = tool_func.__annotations__
+
+        tool_list.append(tool_info)
+
+    return {"tools": tool_list}
+
+# Add a health check endpoint
+
+
+@mcp.app.get("/health")
+async def health_check():
+    """Simple health check endpoint."""
+    return {"status": "ok", "timestamp": datetime.now().isoformat()}
+
+
 # Initialize PowerPoint tools
 try:
     from tools.ppt import get_ppt_tools, PowerPointTools, set_external_mcp
@@ -334,6 +364,31 @@ if missing_vars:
         logging.warning(f"  - {var}: {REQUIRED_ENV_VARS[var]}")
     logging.warning("Some functionality may be limited.")
 
+# Initialize JSON-RPC method for tool discovery
+
+
+@mcp.method()
+async def initialize(ctx: Context):
+    """Return initialization information including available tools."""
+    tool_list = []
+
+    # Extract registered tools from the MCP instance
+    for tool_name, tool_func in mcp.registered_tools.items():
+        tool_info = {
+            "name": tool_name,
+            "description": getattr(tool_func, "__doc__", "No description available"),
+            "parameters": getattr(tool_func, "__annotations__", {})
+        }
+        tool_list.append(tool_info)
+
+    return {
+        "status": "ok",
+        "server_name": mcp.name,
+        "version": getattr(mcp, "version", "1.0.1"),
+        "tools": tool_list
+    }
+
+
 # Server Lifespan and Startup
 
 
@@ -376,9 +431,6 @@ if __name__ == "__main__":
         "port": port,
         "log_level": log_level
     }
-
-    # Import uvicorn to run the ASGI application
-    import uvicorn
 
     # Run the server using uvicorn instead of mcp.run()
     logging.info(f"Starting server at http://{host}:{port}")
