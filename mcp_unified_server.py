@@ -7,6 +7,7 @@ from datetime import datetime
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 import logging
+import uvicorn
 
 # MCP SDK imports
 from mcp.server.fastmcp import FastMCP, Context, Image
@@ -376,5 +377,9 @@ if __name__ == "__main__":
         "log_level": log_level
     }
 
-    # Run the server with configuration from mcp.config
-    mcp.run()
+    # Import uvicorn to run the ASGI application
+    import uvicorn
+
+    # Run the server using uvicorn instead of mcp.run()
+    logging.info(f"Starting server at http://{host}:{port}")
+    uvicorn.run(mcp.app, host=host, port=port, log_level=log_level.lower())
