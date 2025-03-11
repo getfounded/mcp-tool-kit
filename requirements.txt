@@ -20,3 +20,5 @@ aiohttp
 playwright>=1.40.0
 setuptools
 fredapi
+watchdog
+fastapi
