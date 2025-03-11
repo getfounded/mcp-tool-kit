@@ -34,10 +34,8 @@ mcp = FastMCP(
                   "httpx", "pillow", "requests", "pandas", "python-pptx", "nltk"]
 )
 
-# Access the router correctly for route registration
 
-
-@mcp.router.get("/tools")
+@mcp.app.get("/tools")
 async def get_tools():
     """Return a list of all registered tools for client discovery."""
     tool_list = []
@@ -57,10 +55,10 @@ async def get_tools():
 
     return {"tools": tool_list}
 
-# Update health check endpoint too
+# Add a health check endpoint
 
 
-@mcp.router.get("/health")
+@mcp.app.get("/health")
 async def health_check():
     """Enhanced health check endpoint with detailed status."""
     try:
@@ -69,9 +67,12 @@ async def health_check():
             "status": "ok",
             "timestamp": datetime.now().isoformat(),
             "python_version": sys.version,
-            "registered_tools_count": len(mcp.registered_tools)
+            "registered_tools_count": len(mcp.registered_tools),
+            "uptime_seconds": (datetime.now() - datetime.fromisoformat(mcp.startup_time)).total_seconds()
+            if hasattr(mcp, 'startup_time') else 0
         }
 
+        # Add more detailed component status checks here
         return status
     except Exception as e:
         logging.error(f"Health check failed: {str(e)}")
@@ -438,8 +439,11 @@ if __name__ == "__main__":
     logging.debug(f"Python version: {sys.version}")
 
     # Use configuration from environment variables if available
+    # Must be 0.0.0.0 for containers
     host = os.environ.get("MCP_HOST", "0.0.0.0")
+    # Check both PORT and MCP_PORT
     port = int(os.environ.get("PORT", os.environ.get("MCP_PORT", "8000")))
+    # Default to info instead of debug
     log_level = os.environ.get("MCP_LOG_LEVEL", "info")
 
     # Enable detailed logging for troubleshooting
@@ -455,6 +459,6 @@ if __name__ == "__main__":
         "log_level": log_level
     }
 
-    # Run the server using the router instead of app
+    # Run the server using uvicorn instead of mcp.run()
     logging.info(f"Starting server at http://{host}:{port}")
-    uvicorn.run(mcp.router, host=host, port=port, log_level=log_level.lower())
+    uvicorn.run(mcp.app, host=host, port=port, log_level=log_level.lower())
