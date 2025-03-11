@@ -34,8 +34,10 @@ mcp = FastMCP(
                   "httpx", "pillow", "requests", "pandas", "python-pptx", "nltk"]
 )
 
+# Access the router correctly for route registration
 
-@mcp.app.get("/tools")
+
+@mcp.router.get("/tools")
 async def get_tools():
     """Return a list of all registered tools for client discovery."""
     tool_list = []
@@ -55,13 +57,29 @@ async def get_tools():
 
     return {"tools": tool_list}
 
-# Add a health check endpoint
+# Update health check endpoint too
 
 
-@mcp.app.get("/health")
+@mcp.router.get("/health")
 async def health_check():
-    """Simple health check endpoint."""
-    return {"status": "ok", "timestamp": datetime.now().isoformat()}
+    """Enhanced health check endpoint with detailed status."""
+    try:
+        # Check if all critical components are working
+        status = {
+            "status": "ok",
+            "timestamp": datetime.now().isoformat(),
+            "python_version": sys.version,
+            "registered_tools_count": len(mcp.registered_tools)
+        }
+
+        return status
+    except Exception as e:
+        logging.error(f"Health check failed: {str(e)}")
+        return {
+            "status": "error",
+            "error": str(e),
+            "timestamp": datetime.now().isoformat()
+        }
 
 
 # Initialize PowerPoint tools
@@ -414,7 +432,6 @@ async def server_lifespan(server: FastMCP):
 # Set lifespan context manager
 mcp.lifespan = server_lifespan
 
-# Main execution
 if __name__ == "__main__":
     # Add debugging info
     logging.info("Starting MCP Unified Server...")
@@ -422,8 +439,14 @@ if __name__ == "__main__":
 
     # Use configuration from environment variables if available
     host = os.environ.get("MCP_HOST", "0.0.0.0")
-    port = int(os.environ.get("MCP_PORT", "8000"))
-    log_level = os.environ.get("MCP_LOG_LEVEL", "debug")
+    port = int(os.environ.get("PORT", os.environ.get("MCP_PORT", "8000")))
+    log_level = os.environ.get("MCP_LOG_LEVEL", "info")
+
+    # Enable detailed logging for troubleshooting
+    if log_level.lower() == "debug":
+        logging.info("Debug logging enabled")
+        logging.debug(
+            f"Environment variables: {json.dumps({k: v for k, v in os.environ.items() if not k.startswith('_')}, indent=2)}")
 
     # Update configuration
     mcp.config = {
@@ -432,6 +455,6 @@ if __name__ == "__main__":
         "log_level": log_level
     }
 
-    # Run the server using uvicorn instead of mcp.run()
+    # Run the server using the router instead of app
     logging.info(f"Starting server at http://{host}:{port}")
-    uvicorn.run(mcp.app, host=host, port=port, log_level=log_level.lower())
+    uvicorn.run(mcp.router, host=host, port=port, log_level=log_level.lower())
