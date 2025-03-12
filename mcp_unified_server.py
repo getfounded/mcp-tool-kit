@@ -13,8 +13,6 @@ import uvicorn
 # MCP SDK imports
 from mcp.server.fastmcp import FastMCP, Context
 
-from mcp.server.fastmcp import FastMCP, Context
-
 logging.basicConfig(
     level=logging.DEBUG if os.environ.get(
         "MCP_LOG_LEVEL", "").lower() == "debug" else logging.INFO,
