@@ -415,7 +415,6 @@ async def server_lifespan(server: FastMCP):
         # Pass any shared context to the request handlers
         yield {
             "startup_time": datetime.now().isoformat()
-            "startup_time": datetime.now().isoformat()
         }
     finally:
         # Cleanup on shutdown
