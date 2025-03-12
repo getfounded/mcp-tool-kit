@@ -1,6 +1,6 @@
-# MCP Tool Kit: Empowering Claude with Agentic Intelligence
+# MCP Tool Kit: Empowering Vertical Agentic Intelligence
 
-A modular server implementation for Claude AI assistants with a variety of integrated tools, enabling Claude to perform actions and access external resources through an elegantly designed agentic framework.
+A modular server implementation for Claude AI and other assistants with a variety of integrated tools, enabling Claude and other assistants to perform actions and access external resources through an elegantly designed agentic framework.
 
 [![PyPI version](https://img.shields.io/pypi/v/mcptoolkit.svg)](https://pypi.org/project/mcptoolkit/)
 [![Python versions](https://img.shields.io/pypi/pyversions/mcptoolkit.svg)](https://pypi.org/project/mcptoolkit/)
