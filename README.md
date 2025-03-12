@@ -61,7 +61,7 @@ The repository includes a sample Claude desktop configuration file (`claude_desk
       "args": [
         "exec",
         "-i",
-        "mcp-tool-kit-mcp-server",
+        "mcp-tool-kit-mcp-server-1",
         "python",
         "-u",
         "mcp_unified_server.py"
@@ -82,7 +82,7 @@ If you are getting errors running docker, it is likely that the image name is in
       "args": [
         "exec",
         "-i",
-        "mcp-tool-kit-mcp-server-1",
+        "mcp-tool-kit-mcp-server",
         "python",
         "-u",
         "mcp_unified_server.py"
