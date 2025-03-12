@@ -3,12 +3,12 @@
 This roadmap outlines the planned development trajectory for the MCP Unified Server project. As an open source initiative, we welcome contributions and collaboration across all aspects of the roadmap.
 
 
-- [ ] **Stabilize API Surface**: Finalize the API design for all modules
+- [X] **Publish to PyPI**: Add ability to install as package
 - [ ] **Agents**: Implement agents which can be called to use multiple tools at once; intended for precise, specialized vertical AI Agents
 - [ ] **CI/CD Pipeline**: Set up automated testing and deployment workflows
 - [X] **Docker Support**: Create containerized deployment option
-- [ ] **Logging Improvements**: Enhanced logging system with configurable levels editor
-- [ ] **AI Tools Hub**: Marketplace for third-party tool integrations
+- [ ] **Screen Reading**: Support for visually impaired
+- [ ] **Multi-agent**: Ability to enable multiple agents to work together
 - [ ] **Voice Interface**: Speech recognition and synthesis integration
 - [ ] **Long-running Tasks**: Background job processing system
 - [ ] **Computer Vision**: Image and video analysis capabilities
