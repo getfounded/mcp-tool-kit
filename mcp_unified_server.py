@@ -8,10 +8,9 @@ from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 import logging
 import uvicorn
-
+from fastapi import FastAPI
 # MCP SDK imports
-from mcp.server.fastmcp import FastMCP, Context, Image
-from mcp.types import Tool, TextContent, ImageContent
+from mcp.server.fastmcp import FastMCP, Context
 
 logging.basicConfig(
     level=logging.DEBUG if os.environ.get(
@@ -33,6 +32,9 @@ mcp = FastMCP(
     dependencies=["newsapi-python", "msal", "python-dotenv",
                   "httpx", "pillow", "requests", "pandas", "python-pptx", "nltk"]
 )
+
+# Create and attach a FastAPI app explicitly
+mcp.app = FastAPI(title=mcp.name)
 
 
 @mcp.app.get("/tools")
