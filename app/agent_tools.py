@@ -5,7 +5,7 @@ import logging
 
 from mcp.server.fastmcp import FastMCP, Context
 from app.toolkit import MCPToolKit
-from agent_registry import get_agent_instance, get_registered_agents
+from app.agent_registry import get_agent_instance, get_registered_agents
 
 logger = logging.getLogger("agent_tools")
 

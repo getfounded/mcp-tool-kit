@@ -7,7 +7,7 @@ import sys
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
-from .agent_registry import MCPAgent, registered_agents
+from app.agent_registry import MCPAgent, registered_agents
 
 logger = logging.getLogger("agent_watcher")
 
