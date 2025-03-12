@@ -61,7 +61,28 @@ The repository includes a sample Claude desktop configuration file (`claude_desk
       "args": [
         "exec",
         "-i",
-        "mcp-tool-kit-server",
+        "mcp-tool-kit-mcp-server",
+        "python",
+        "-u",
+        "mcp_unified_server.py"
+      ],
+      "useStdio": true
+    }
+  }
+}
+```
+### Troubleshooting docker
+If you are getting errors running docker, it is likely that the image name is incorrect in the Claude desktop configuration file. A common fix is to use the following json for configuration:
+
+```json
+{
+  "mcpServers": {
+    "unified": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "-i",
+        "mcp-tool-kit-mcp-server-1",
         "python",
         "-u",
         "mcp_unified_server.py"
@@ -72,8 +93,7 @@ The repository includes a sample Claude desktop configuration file (`claude_desk
 }
 ```
 
-
-Install via pip:
+## Install via pip
 ```bash
 # Simple installation
 pip install mcptoolkit
