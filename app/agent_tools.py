@@ -4,7 +4,7 @@ from typing import Dict, Any
 import logging
 
 from mcp.server.fastmcp import FastMCP, Context
-from toolkit import MCPToolKit
+from app.toolkit import MCPToolKit
 from agent_registry import get_agent_instance, get_registered_agents
 
 logger = logging.getLogger("agent_tools")
