@@ -7,26 +7,24 @@ import sys
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
-from agent_registry import MCPAgent, registered_agents
+from .agent_registry import MCPAgent, registered_agents
 
 logger = logging.getLogger("agent_watcher")
 
 
 class AgentFileHandler(FileSystemEventHandler):
-    """Handler for file system events in the agents directory"""
+    """Handler that automatically loads agent files when they're added or modified"""
 
     def on_created(self, event):
         """Called when a file is created in the watched directory"""
         if event.is_directory or not event.src_path.endswith('.py'):
             return
-
         self._process_agent_file(event.src_path)
 
     def on_modified(self, event):
         """Called when a file is modified in the watched directory"""
         if event.is_directory or not event.src_path.endswith('.py'):
             return
-
         self._process_agent_file(event.src_path)
 
     def _process_agent_file(self, file_path):

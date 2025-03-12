@@ -2,8 +2,8 @@
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from pydantic import BaseModel
 from typing import Optional
-
-from agent_generator import create_agent
+import os
+from app.create_agent import create_agent
 
 # Create FastAPI app
 api_app = FastAPI()
@@ -35,8 +35,3 @@ async def create_new_agent(agent: AgentCreate, background_tasks: BackgroundTasks
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Error creating agent: {str(e)}")
-
-# In your main server code, add:
-# from fastapi import FastAPI
-# app = FastAPI()
-# app.mount("/api", api_app)

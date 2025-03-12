@@ -308,7 +308,6 @@ class PDFService:
                 # Create an image watermark
                 from reportlab.pdfgen import canvas
                 from reportlab.lib.pagesizes import letter
-                from reportlab.lib.utils import ImageReader
 
                 # Open and resize image
                 img = PILImage.open(image_path)
@@ -442,6 +441,78 @@ class PDFService:
             }
         except Exception as e:
             raise ValueError(f"Error decrypting PDF: {str(e)}")
+
+    async def get_form_fields(self, file_path):
+        """Get all form fields in a PDF file"""
+        try:
+            with open(file_path, 'rb') as file:
+                pdf = PyPDF2.PdfReader(file)
+
+                # Get form fields and their values
+                try:
+                    form_fields = pdf.get_form_text_fields() or {}
+                except Exception:
+                    # If there are no form fields or an error occurs
+                    form_fields = {}
+
+                return {
+                    "form_fields": form_fields,
+                    "count": len(form_fields)
+                }
+        except Exception as e:
+            raise ValueError(f"Error getting form fields: {str(e)}")
+
+    async def fill_form(self, file_path, output_path, form_data):
+        """Fill out form fields in a PDF file"""
+        try:
+            # Open the source PDF
+            with open(file_path, 'rb') as file:
+                pdf = PyPDF2.PdfReader(file)
+
+                # Get existing form fields to check if the provided fields exist
+                try:
+                    existing_fields = pdf.get_form_text_fields() or {}
+                except Exception:
+                    existing_fields = {}
+
+                if not existing_fields:
+                    raise ValueError(
+                        "The PDF does not contain any form fields")
+
+                # Validate form data
+                for field_name in form_data.keys():
+                    if field_name not in existing_fields:
+                        raise ValueError(
+                            f"Field '{field_name}' does not exist in the PDF form")
+
+                # Create a PDF writer
+                pdf_writer = PyPDF2.PdfWriter()
+
+                # Add all pages to the writer
+                for page in pdf.pages:
+                    pdf_writer.add_page(page)
+
+                # Use the appropriate method based on the PyPDF2 version
+                try:
+                    # Try the newer method first (PyPDF2 2.10+)
+                    pdf_writer.update_form_fields(form_data)
+                except AttributeError:
+                    # Fall back to updating pages individually
+                    for i in range(len(pdf_writer.pages)):
+                        pdf_writer.update_page_form_field_values(
+                            pdf_writer.pages[i], form_data)
+
+                # Write output file
+                with open(output_path, 'wb') as output_file:
+                    pdf_writer.write(output_file)
+
+                return {
+                    "output_path": output_path,
+                    "filled_fields": list(form_data.keys()),
+                    "pages": len(pdf.pages)
+                }
+        except Exception as e:
+            raise ValueError(f"Error filling form: {str(e)}")
 
 # Tool function definitions that will be registered with MCP
 
@@ -591,6 +662,36 @@ async def pdf_decrypt(file_path: str, output_path: str, password: str, ctx: Cont
     except Exception as e:
         return json.dumps({"error": str(e)}, indent=2)
 
+
+async def pdf_get_form_fields(file_path: str, ctx: Context = None) -> str:
+    """Get all form fields in a PDF document.
+
+    Parameters:
+    - file_path: Path to the PDF file
+    """
+    try:
+        pdf_service = _get_pdf_service()
+        results = await pdf_service.get_form_fields(file_path)
+        return json.dumps(results, indent=2)
+    except Exception as e:
+        return json.dumps({"error": str(e)}, indent=2)
+
+
+async def pdf_fill_form(file_path: str, output_path: str, form_data: Dict[str, str], ctx: Context = None) -> str:
+    """Fill out form fields in a PDF document.
+
+    Parameters:
+    - file_path: Path to the PDF file
+    - output_path: Path to save the filled form
+    - form_data: Dictionary with field names as keys and field values as values
+    """
+    try:
+        pdf_service = _get_pdf_service()
+        results = await pdf_service.fill_form(file_path, output_path, form_data)
+        return json.dumps(results, indent=2)
+    except Exception as e:
+        return json.dumps({"error": str(e)}, indent=2)
+
 # Tool registration and initialization
 _pdf_service = None
 
@@ -620,5 +721,7 @@ def get_pdf_tools():
         "pdf_merge": pdf_merge,
         "pdf_add_watermark": pdf_add_watermark,
         "pdf_encrypt": pdf_encrypt,
-        "pdf_decrypt": pdf_decrypt
+        "pdf_decrypt": pdf_decrypt,
+        "pdf_get_form_fields": pdf_get_form_fields,
+        "pdf_fill_form": pdf_fill_form
     }

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-from agent_watcher import start_agent_watcher
-from tools.agent_tools import register_agent_tools
+from app.agent_watcher import start_agent_watcher
+from app.agent_tools import register_agent_tools
 import sys
 import os
 from pathlib import Path
@@ -10,11 +10,10 @@ from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 import logging
 import uvicorn
-import api.server as server
+import app.api.server as server
 
 # MCP SDK imports
-from mcp.server.fastmcp import FastMCP, Context, Image
-from mcp.types import Tool, TextContent, ImageContent
+from mcp.server.fastmcp import FastMCP, Context
 
 logging.basicConfig(
     level=logging.DEBUG if os.environ.get(

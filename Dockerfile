@@ -33,12 +33,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Copy requirements and install dependencies - with proper dependency handling
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt || \
-    pip install --no-cache-dir --trusted-host pypi.org --trusted-host files.pythonhosted.org -r requirements.txt || \
-    pip install --no-cache-dir -r requirements.txt --use-pep517 --trusted-host pypi.org --trusted-host files.pythonhosted.org
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
 
 # Install Playwright and browsers
-RUN playwright install chromium
+RUN playwright install chromium firefox webkit
 RUN playwright install-deps chromium
 
 # Verify MCP and Playwright are installed

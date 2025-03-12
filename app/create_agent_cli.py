@@ -4,7 +4,7 @@ import sys
 import os
 import argparse
 import textwrap
-from agent_generator import create_agent
+from app.create_agent import create_agent
 
 
 def main():
