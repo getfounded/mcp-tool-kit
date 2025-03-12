@@ -102,10 +102,8 @@ pip install mcptoolkit
 mcptoolkit-server
 ```
 
-Configure Claude Desktop:
-1. Open Claude Desktop app
-2. Go to File > Settings > Developer > Edit config
-3. Add the following basic configuration:
+
+Local server basic configuration:
 
 ```json
 {
@@ -129,7 +127,7 @@ Configure Claude Desktop:
 3. Add the 'claude_desktop_configuration.json' file
 4. Save the configuration
 5. Restart the MCP server with your new tool integrated
-6. Restart and Open Claude Desktop app
+6. Restart and Open Claude Desktop app (for windows users you must use task manager to end task for all Claude instances)
 
 
 You can import this configuration in the Claude desktop app or use it as a reference to create your own.
