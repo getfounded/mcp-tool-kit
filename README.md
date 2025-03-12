@@ -31,6 +31,9 @@ The MCP Unified Server provides a unified interface for Claude to interact with 
 - **FRED**: Federal Reserve Economic Data
 - **And many more specialized tools**
 
+# 87 Total Tools Available
+![Claude screenshot with tools](./static/87_tools.png)
+
 # Building Custom Tools for Claude with MCP Toolkit
 
 This guide demonstrates how to create custom tools that Claude can use via the Model Context Protocol (MCP) toolkit.

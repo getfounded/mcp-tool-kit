@@ -2,7 +2,7 @@ import logging
 from typing import List, Dict, Optional, Any, Union
 
 # Assuming MCPClient is defined elsewhere
-from mcp.client import MCPClient
+from app.toolkit_client import MCPClient
 
 
 class MCPToolKit:

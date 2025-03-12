@@ -1,6 +1,7 @@
 FROM python:3.12-slim
 
 WORKDIR /app
+COPY app/ /app/app/
 
 # Install system dependencies for Playwright/Chromium
 RUN apt-get update && apt-get install -y --no-install-recommends \
