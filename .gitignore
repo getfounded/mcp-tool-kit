@@ -3,10 +3,4 @@
 build_and_uploaad.py
 setup.py
 fix_upload.py
-./build
-./dist
-./__pycache__
-./mcptoolkit.egg-info
-./PyPI_README.md
-./MANIFEST.in
-
+./dnu

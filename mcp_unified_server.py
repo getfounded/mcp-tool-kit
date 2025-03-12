@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+from app.agent_watcher import start_agent_watcher
+from app.agent_tools import register_agent_tools
 import sys
 import os
 from pathlib import Path
@@ -8,11 +10,14 @@ from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 import logging
 import uvicorn
-from fastapi import FastAPI
 # MCP SDK imports
 from mcp.server.fastmcp import FastMCP, Context
 
+from mcp.server.fastmcp import FastMCP, Context
+
 logging.basicConfig(
+    level=logging.DEBUG if os.environ.get(
+        "MCP_LOG_LEVEL", "").lower() == "debug" else logging.INFO,
     level=logging.DEBUG if os.environ.get(
         "MCP_LOG_LEVEL", "").lower() == "debug" else logging.INFO,
     format='%(asctime)s [%(levelname)s] %(message)s',
@@ -33,36 +38,11 @@ mcp = FastMCP(
                   "httpx", "pillow", "requests", "pandas", "python-pptx", "nltk"]
 )
 
-# Create and attach a FastAPI app explicitly
-mcp.app = FastAPI(title=mcp.name)
-
-
-@mcp.app.get("/tools")
-async def get_tools():
-    """Return a list of all registered tools for client discovery."""
-    tool_list = []
-
-    # If the MCP SDK stores tools in its instance, we can extract them
-    for tool_name, tool_func in mcp.registered_tools.items():
-        tool_info = {
-            "name": tool_name,
-            "description": getattr(tool_func, "__doc__", "No description available")
-        }
-
-        # Add parameter information if available
-        if hasattr(tool_func, "__annotations__"):
-            tool_info["parameters"] = tool_func.__annotations__
-
-        tool_list.append(tool_info)
-
-    return {"tools": tool_list}
-
 # Add a health check endpoint
 
 
-@mcp.app.get("/health")
-async def health_check():
-    """Enhanced health check endpoint with detailed status."""
+@mcp.tool(name="health_check")
+async def health_check(ctx: Context):
     try:
         # Check if all critical components are working
         status = {
@@ -87,7 +67,7 @@ async def health_check():
 
 # Initialize PowerPoint tools
 try:
-    from tools.ppt import get_ppt_tools, PowerPointTools, set_external_mcp
+    from app.tools.ppt import get_ppt_tools, PowerPointTools, set_external_mcp
     # Pass our MCP instance to the ppt module
     set_external_mcp(mcp)
     ppt_available = True
@@ -115,7 +95,7 @@ except ImportError as e:
 
 # Initialize Playwright tools
 try:
-    from tools.browser_automation import get_playwright_tools, set_external_mcp, initialize
+    from app.tools.browser_automation import get_playwright_tools, set_external_mcp, initialize
 
     # Pass our MCP instance to the playwright module
     set_external_mcp(mcp)
@@ -142,7 +122,7 @@ except ImportError as e:
 
 # Initialize Filesystem tools
 try:
-    from tools.filesystem import get_filesystem_tools, set_external_mcp, initialize_fs_tools
+    from app.tools.filesystem import get_filesystem_tools, set_external_mcp, initialize_fs_tools
 
     # Pass our MCP instance to the filesystem module
     set_external_mcp(mcp)
@@ -170,7 +150,7 @@ except ImportError as e:
 
 # Initialize Time tools
 try:
-    from tools.time_tools import get_time_tools, set_external_mcp, initialize_time_tools
+    from app.tools.time_tools import get_time_tools, set_external_mcp, initialize_time_tools
 
     # Pass our MCP instance to the time tools module
     set_external_mcp(mcp)
@@ -192,7 +172,7 @@ except ImportError as e:
 
 # Initialize Sequential Thinking tools
 try:
-    from tools.sequential_thinking import get_sequential_thinking_tools, set_external_mcp, initialize_thinking_service
+    from app.tools.sequential_thinking import get_sequential_thinking_tools, set_external_mcp, initialize_thinking_service
 
     # Pass our MCP instance to the sequential thinking module
     set_external_mcp(mcp)
@@ -212,7 +192,7 @@ except ImportError as e:
 
 # Initialize FRED API tools
 try:
-    from tools.fred import get_fred_api_tools, set_external_mcp, initialize_fred_api_service, initialize
+    from app.tools.fred import get_fred_api_tools, set_external_mcp, initialize_fred_api_service, initialize
 
     # Pass our MCP instance to the FRED module
     set_external_mcp(mcp)
@@ -238,7 +218,7 @@ except ImportError as e:
 
 # Initialize YFinance tools
 try:
-    from tools.yfinance import get_yfinance_tools, set_external_mcp, initialize
+    from app.tools.yfinance import get_yfinance_tools, set_external_mcp, initialize
 
     # Pass our MCP instance to the yfinance module
     set_external_mcp(mcp)
@@ -264,7 +244,7 @@ except ImportError as e:
 
 # Initialize Streamlit tools
 try:
-    from tools.streamlit import get_streamlit_tools, set_external_mcp, initialize
+    from app.tools.streamlit import get_streamlit_tools, set_external_mcp, initialize
 
     # Pass our MCP instance to the streamlit module
     set_external_mcp(mcp)
@@ -296,7 +276,7 @@ except ImportError as e:
 
 # Initialize Brave Search tools
 try:
-    from tools.brave_search import get_brave_search_tools, set_external_mcp, initialize_brave_search
+    from app.tools.brave_search import get_brave_search_tools, set_external_mcp, initialize_brave_search
 
     # Pass our MCP instance to the brave search module
     set_external_mcp(mcp)
@@ -321,7 +301,7 @@ except ImportError as e:
 
 # Initialize World Bank tools
 try:
-    from tools.worldbank import get_worldbank_tools, get_worldbank_resources, set_external_mcp, initialize_worldbank_service
+    from app.tools.worldbank import get_worldbank_tools, get_worldbank_resources, set_external_mcp, initialize_worldbank_service
 
     # Pass our MCP instance to the world bank module
     set_external_mcp(mcp)
@@ -347,7 +327,7 @@ except ImportError as e:
 
 # Initialize News API tools
 try:
-    from tools.news_api import get_news_api_tools, set_external_mcp, initialize_news_api_service
+    from app.tools.news_api import get_news_api_tools, set_external_mcp, initialize_news_api_service
 
     # Pass our MCP instance to the news api module
     set_external_mcp(mcp)
@@ -388,7 +368,7 @@ if missing_vars:
 # Initialize JSON-RPC method for tool discovery
 
 
-@mcp.method()
+@mcp.tool(name="initialize")
 async def initialize(ctx: Context):
     """Return initialization information including available tools."""
     tool_list = []
@@ -409,6 +389,15 @@ async def initialize(ctx: Context):
         "tools": tool_list
     }
 
+# Register agent tools
+register_agent_tools(mcp)
+
+# Start agent watcher for automatic agent discovery
+observer = start_agent_watcher("agents")
+
+# Start the server
+host = os.environ.get("SERVER_HOST", "0.0.0.0")
+port = int(os.environ.get("SERVER_PORT", "8000"))
 
 # Server Lifespan and Startup
 
@@ -426,6 +415,7 @@ async def server_lifespan(server: FastMCP):
         # Pass any shared context to the request handlers
         yield {
             "startup_time": datetime.now().isoformat()
+            "startup_time": datetime.now().isoformat()
         }
     finally:
         # Cleanup on shutdown
@@ -442,7 +432,18 @@ if __name__ == "__main__":
 
     # Use configuration from environment variables if available
     # Must be 0.0.0.0 for containers
+    # Must be 0.0.0.0 for containers
     host = os.environ.get("MCP_HOST", "0.0.0.0")
+    # Check both PORT and MCP_PORT
+    port = int(os.environ.get("PORT", os.environ.get("MCP_PORT", "8000")))
+    # Default to info instead of debug
+    log_level = os.environ.get("MCP_LOG_LEVEL", "info")
+
+    # Enable detailed logging for troubleshooting
+    if log_level.lower() == "debug":
+        logging.info("Debug logging enabled")
+        logging.debug(
+            f"Environment variables: {json.dumps({k: v for k, v in os.environ.items() if not k.startswith('_')}, indent=2)}")
     # Check both PORT and MCP_PORT
     port = int(os.environ.get("PORT", os.environ.get("MCP_PORT", "8000")))
     # Default to info instead of debug
@@ -461,6 +462,6 @@ if __name__ == "__main__":
         "log_level": log_level
     }
 
-    # Run the server using uvicorn instead of mcp.run()
+    # Run the server using the MCP's own method instead of direct uvicorn
     logging.info(f"Starting server at http://{host}:{port}")
-    uvicorn.run(mcp.app, host=host, port=port, log_level=log_level.lower())
+    mcp.run()

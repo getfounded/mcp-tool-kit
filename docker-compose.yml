@@ -1,6 +1,5 @@
 services:
   mcp-server:
-    container_name: mcp-tool-kit-mcp-server
     build: .
     ports:
       - "8000:8000"  # Maps host port 8000 to container port 8000
