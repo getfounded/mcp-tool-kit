@@ -1,5 +1,5 @@
 # agents/stock_lookup_agent.py
-from agent_registry import MCPAgent, register_agent
+from ..agent_registry import MCPAgent, register_agent
 import json
 
 
