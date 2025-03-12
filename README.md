@@ -55,19 +55,15 @@ Configure Claude Desktop:
 
 ```json
 {
-  "mcpServers": {
-    "unified": {
-      "command": "docker",
-      "args": [
-        "exec",
-        "-i",
-        "mcp-tool-kit-server",
-        "python",
-        "-u",
-        "mcp_unified_server.py"
-      ],
-      "useStdio": true
+  "tools": [
+    {
+      "name": "MCP Toolkit",
+      "url": "http://localhost:8000"
     }
+  ],
+  "settings": {
+    "allowed_directories": ["~/Documents", "~/Downloads"],
+    "default_tools": ["MCP Toolkit"]
   }
 }
 ```
