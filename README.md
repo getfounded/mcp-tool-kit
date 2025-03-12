@@ -38,8 +38,42 @@ The MCP Unified Server provides a unified interface for Claude to interact with 
 
 ## Quickstart Guide: Deploy Your First MCP Server with Default Tools
 
-Get started in minutes with just the essential capabilities:
 
+##Docker deployment (recommended)
+1) Clone the repository:
+```git 
+clone https://github.com/getfounded/mcp-tool-kit.git
+cd mcp-tool-kit
+```
+2) You can then use Docker in one of two ways:
+Option 1 - Using docker-compose:
+```docker-compose up```
+Option 2 - Direct Docker command:
+```docker run -p 8000:8000 -v ~/documents:/app/documents getfounded/mcp-tool-kit:latest```
+
+The repository includes a sample Claude desktop configuration file (`claude_desktop_config.json`) that you can use:
+
+```json
+{
+  "mcpServers": {
+    "unified": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "-i",
+        "mcp-tool-kit-server",
+        "python",
+        "-u",
+        "mcp_unified_server.py"
+      ],
+      "useStdio": true
+    }
+  }
+}
+```
+
+
+Install via pip:
 ```bash
 # Simple installation
 pip install mcptoolkit
@@ -68,7 +102,17 @@ Configure Claude Desktop:
 }
 ```
 
-4. Save and restart Claude Desktop
+## Configure Claude Desktop to Access Your Server
+
+1. Open Claude Desktop app
+2. Go to File > Settings > Developer > Edit config
+3. Add the 'claude_desktop_configuration.json' file
+4. Save the configuration
+5. Restart the MCP server with your new tool integrated
+6. Restart and Open Claude Desktop app
+
+
+You can import this configuration in the Claude desktop app or use it as a reference to create your own.
 
 You now have immediate access to powerful capabilities including file operations, web search, time tools, and more—without requiring any API keys or complex setup.
 
@@ -109,6 +153,17 @@ class WeatherAgent(MCPAgent):
         except Exception as e:
             return {"error": f"Error checking weather: {str(e)}"}
 ```
+##Docker deployment
+1) Clone the repository:
+```git 
+clone https://github.com/getfounded/mcp-tool-kit.git
+cd mcp-tool-kit
+```
+2) You can then use Docker in one of two ways:
+Option 1 - Using docker-compose:
+```docker-compose up```
+Option 2 - Direct Docker command:
+```docker run -p 8000:8000 -v ~/documents:/app/documents getfounded/mcp-tool-kit:latest```
 
 ### Simplified Deployment: Instant Agent Availability
 
@@ -241,59 +296,9 @@ server = mcp_unified_server.create_server()
 server.start()
 ```
 
-## Step-by-Step Implementation Guide
-
-### Step 1: Set Up Your MCP Server with the Toolkit
-
-Start by running the MCP server:
-
-```bash
-# Using Docker (recommended)
-docker run -p 8000:8000 -v ~/documents:/app/documents -v ~/downloads:/app/downloads getfounded/mcp-tool-kit:latest
-
-# Or if installed via pip
-mcptoolkit-server
-```
-
-### Configure Claude Desktop to Access Your Server
-
-1. Open Claude Desktop app
-2. Go to File > Settings > Developer > Edit config
-3. Add the 'claude_desktop_configuration.json' file
-4. Save the configuration
-5. Restart the MCP server with your new tool integrated
-6. Restart and Open Claude Desktop app
-
-## Example: Claude Desktop Configuration
-
-The repository includes a sample Claude desktop configuration file (`claude_desktop_config.json`) that you can use:
-
-```json
-{
-  "mcpServers": {
-    "unified": {
-      "command": "docker",
-      "args": [
-        "exec",
-        "-i",
-        "mcp-tool-kit-server",
-        "python",
-        "-u",
-        "mcp_unified_server.py"
-      ],
-      "useStdio": true
-    }
-  }
-}
-```
-
-You can import this configuration in the Claude desktop app or use it as a reference to create your own.
-
----
-
 ## Other Usage Examples
 
-### Example 2: Practical Tool Examples
+### Example: Practical Tool Examples
 
 ```python
 from mcp.client import MCPClient
