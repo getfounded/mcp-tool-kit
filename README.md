@@ -39,7 +39,7 @@ The MCP Unified Server provides a unified interface for Claude to interact with 
 ## Quickstart Guide: Deploy Your First MCP Server with Default Tools
 Note: ensure that you have git downloaded (https://git-scm.com/downloads) and Docker downloaded (https://www.docker.com/products/docker-desktop/) and running.
 
-## Docker deployment (recommended)
+## Docker deployment (recommended & most stable)
 1) Clone the repository:
 ```git 
 clone https://github.com/getfounded/mcp-tool-kit.git
