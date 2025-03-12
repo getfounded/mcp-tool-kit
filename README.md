@@ -21,6 +21,7 @@ The MCP Unified Server provides a unified interface for Claude to interact with 
 - **Sequential thinking**: A tool for dynamic and reflective problem-solving
 - **Brave Search**: Web and local search capabilities
 - **Browser automation**: Complete browser control via Browserbase and Playwright
+- **Browser automation**: Complete browser control via Browserbase and Playwright
 - **World Bank API**: Access to economic and development data
 - **News API**: Access to global news sources and articles
 - **PowerPoint**: Create and manipulate PowerPoint presentations
@@ -500,12 +501,20 @@ MCP_AGENT_DIR=agents  # Directory to scan for agent files
 ### Configuration UI
 
 The package includes a web-based configuration UI:
+### Configuration UI
+
+The package includes a web-based configuration UI:
 
 ```bash
 # Run the configuration UI
 mcptoolkit-config
 ```
+```bash
+# Run the configuration UI
+mcptoolkit-config
+```
 
+Access the UI in your web browser at http://localhost:8501
 Access the UI in your web browser at http://localhost:8501
 
 ## Available Tools
@@ -604,6 +613,7 @@ Access the UI in your web browser at http://localhost:8501
 - `ppt_generate_presentation`: Generate a presentation from text
 - `ppt_command`: Process natural language commands
 
+For a complete list of available tools, see the documentation or browse the tools directory.
 For a complete list of available tools, see the documentation or browse the tools directory.
 
 ## Development

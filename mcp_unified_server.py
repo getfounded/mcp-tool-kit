@@ -13,7 +13,11 @@ import uvicorn
 # MCP SDK imports
 from mcp.server.fastmcp import FastMCP, Context
 
+from mcp.server.fastmcp import FastMCP, Context
+
 logging.basicConfig(
+    level=logging.DEBUG if os.environ.get(
+        "MCP_LOG_LEVEL", "").lower() == "debug" else logging.INFO,
     level=logging.DEBUG if os.environ.get(
         "MCP_LOG_LEVEL", "").lower() == "debug" else logging.INFO,
     format='%(asctime)s [%(levelname)s] %(message)s',
@@ -411,6 +415,7 @@ async def server_lifespan(server: FastMCP):
         # Pass any shared context to the request handlers
         yield {
             "startup_time": datetime.now().isoformat()
+            "startup_time": datetime.now().isoformat()
         }
     finally:
         # Cleanup on shutdown
@@ -427,7 +432,18 @@ if __name__ == "__main__":
 
     # Use configuration from environment variables if available
     # Must be 0.0.0.0 for containers
+    # Must be 0.0.0.0 for containers
     host = os.environ.get("MCP_HOST", "0.0.0.0")
+    # Check both PORT and MCP_PORT
+    port = int(os.environ.get("PORT", os.environ.get("MCP_PORT", "8000")))
+    # Default to info instead of debug
+    log_level = os.environ.get("MCP_LOG_LEVEL", "info")
+
+    # Enable detailed logging for troubleshooting
+    if log_level.lower() == "debug":
+        logging.info("Debug logging enabled")
+        logging.debug(
+            f"Environment variables: {json.dumps({k: v for k, v in os.environ.items() if not k.startswith('_')}, indent=2)}")
     # Check both PORT and MCP_PORT
     port = int(os.environ.get("PORT", os.environ.get("MCP_PORT", "8000")))
     # Default to info instead of debug
