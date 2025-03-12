@@ -1,6 +1,6 @@
-# MCP Tool Kit
+# MCP Tool Kit: Empowering Claude with Agentic Intelligence
 
-A modular server implementation for Claude AI assistants with a variety of integrated tools, enabling Claude to perform actions and access external resources.
+A modular server implementation for Claude AI assistants with a variety of integrated tools, enabling Claude to perform actions and access external resources through an elegantly designed agentic framework.
 
 [![PyPI version](https://img.shields.io/pypi/v/mcptoolkit.svg)](https://pypi.org/project/mcptoolkit/)
 [![Python versions](https://img.shields.io/pypi/pyversions/mcptoolkit.svg)](https://pypi.org/project/mcptoolkit/)
@@ -29,12 +29,173 @@ The MCP Unified Server provides a unified interface for Claude to interact with 
 - **Shopify**: E-commerce platform integration
 - **Yahoo Finance**: Stock market and financial data
 - **FRED**: Federal Reserve Economic Data
+- **Agentic capabilities**: Create and deploy autonomous agents that perform complex tasks
 - **And many more specialized tools**
 
-# 87 Total Tools Available
+## 87 Total Tools Available
 ![Claude screenshot with tools](./static/87_tools.png)
 
-# Building Custom Tools for Claude with MCP Toolkit
+## Quickstart Guide: Deploy Your First MCP Server with Default Tools
+
+Get started in minutes with just the essential capabilities:
+
+```bash
+# Simple installation
+pip install mcptoolkit
+
+# Launch the server with default configuration
+mcptoolkit-server
+```
+
+Configure Claude Desktop:
+1. Open Claude Desktop app
+2. Go to File > Settings > Developer > Edit config
+3. Add the following basic configuration:
+
+```json
+{
+  "mcpServers": {
+    "unified": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "-i",
+        "mcp-tool-kit-server",
+        "python",
+        "-u",
+        "mcp_unified_server.py"
+      ],
+      "useStdio": true
+    }
+  }
+}
+```
+
+4. Save and restart Claude Desktop
+
+You now have immediate access to powerful capabilities including file operations, web search, time tools, and more—without requiring any API keys or complex setup.
+
+## Unleashing Agentic Intelligence: Creating AI Agents with MCP Tool Kit
+
+MCP Tool Kit introduces a powerful yet accessible framework for creating autonomous AI agents—specialized cognitive modules that can perform complex tasks without requiring direct user guidance.
+
+### The Agent Architecture: Simplicity Meets Sophistication
+
+Agents in MCP Tool Kit function as self-contained Python modules that Claude can invoke to perform specialized tasks. The architecture embraces a file-based approach with automatic detection and loading, eliminating complex API requirements or deployment procedures.
+
+```python
+# Example: A simple weather agent
+from agent_registry import MCPAgent, register_agent
+
+@register_agent
+class WeatherAgent(MCPAgent):
+    agent_name = "weather_checker"
+    agent_description = "Checks weather conditions for a location"
+    agent_version = "1.0"
+    
+    def run(self, params):
+        if "location" not in params:
+            return {"error": "No location provided"}
+            
+        location = params["location"]
+        
+        try:
+            # Use toolkit methods to gather information
+            search_query = f"current weather {location}"
+            search_results = self.toolkit.web_search(search_query)
+            
+            return {
+                "success": True,
+                "location": location,
+                "weather_info": search_results
+            }
+        except Exception as e:
+            return {"error": f"Error checking weather: {str(e)}"}
+```
+
+### Simplified Deployment: Instant Agent Availability
+
+The agent deployment process has been reimagined for maximum simplicity:
+
+1. **File-Based Deployment**: Simply drop agent files into the designated directory
+2. **Automatic Detection**: The system immediately discovers and loads new or modified agents 
+3. **No Server Restarts**: Agents become available instantly without interrupting operations
+4. **Multiple Creation Pathways**: Create agents through templates, command-line utilities, or direct file creation
+
+```bash
+# Create the agents directory if it doesn't exist
+mkdir -p agents
+
+# Create a quick lookup agent by dropping a file
+cat > agents/quick_lookup.py << 'EOF'
+from agent_registry import MCPAgent, register_agent
+
+@register_agent
+class QuickLookupAgent(MCPAgent):
+    agent_name = "quick_lookup"
+    agent_description = "Quickly lookup information"
+    
+    def run(self, params):
+        query = params.get("query", "unknown")
+        result = self.toolkit.web_search(query, count=3)
+        return {"result": result}
+EOF
+
+# The agent is IMMEDIATELY available to Claude!
+```
+
+### Command-Line Agent Creation
+
+For those who prefer guided creation, MCP Tool Kit provides intuitive command-line utilities:
+
+```bash
+# Create with interactive editor
+./create_agent.py "Currency Converter" "Converts between currencies"
+
+# Use a template
+./create_agent.py "Quick Calculator" "Performs calculations" --template calculator
+
+# Specify code directly
+./create_agent.py "News Finder" "Finds latest news" --code "
+query = params.get('topic', 'general')
+news = self.toolkit.news_search(query, page_size=3)
+return {'news': news}
+"
+```
+
+### Template-Based Deployment
+
+For faster development, deploy pre-made templates with custom configurations:
+
+```bash
+# View available templates
+ls agent_templates
+
+# Deploy and customize a template
+./deploy_template_agent.py weather --name "City Weather" --description "Get weather for any city"
+```
+
+### Interacting with Agents through Claude
+
+Once deployed, agents seamlessly integrate with Claude's capabilities:
+
+```
+User: Can you check the weather in San Francisco?
+
+Claude: I'll use the weather_checker agent to find that information for you.
+
+[Claude invokes the weather_checker agent with {"location": "San Francisco"}]
+
+Based on the current weather information for San Francisco:
+- Temperature: 62°F / 17°C
+- Conditions: Partly cloudy
+- Humidity: 74%
+- Wind: 12 mph western breeze
+
+Would you like me to check any other locations for you?
+```
+
+## Building Custom Tools for Claude with MCP Toolkit
 
 This guide demonstrates how to create custom tools that Claude can use via the Model Context Protocol (MCP) toolkit.
 
@@ -112,15 +273,19 @@ The repository includes a sample Claude desktop configuration file (`claude_desk
 
 ```json
 {
-  "tools": [
-    {
-      "name": "MCP Toolkit",
-      "url": "http://localhost:8000"
+  "mcpServers": {
+    "unified": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "-i",
+        "mcp-tool-kit-server",
+        "python",
+        "-u",
+        "mcp_unified_server.py"
+      ],
+      "useStdio": true
     }
-  ],
-  "settings": {
-    "allowed_directories": ["~/Documents", "~/Downloads"],
-    "default_tools": ["MCP Toolkit"]
   }
 }
 ```
@@ -299,6 +464,8 @@ Once set up, you can ask Claude to use the tools with prompts like:
 
 - "Search the web for the latest AI research papers and summarize the findings."
 - "Create a PowerPoint presentation about climate change with three slides."
+- "Use the weather_checker agent to tell me the current conditions in Tokyo."
+- "Can you use the quick_lookup agent to research quantum computing advances?"
 - "Download my QuickBooks invoice data and analyze our revenue for the past quarter."
 - "Set up a product on my Shopify store with these details and pricing."
 - "Get the current stock price and historical data for Tesla using Yahoo Finance."
@@ -325,6 +492,9 @@ NEWS_API_KEY=your_news_api_key
 
 # File System Configuration
 MCP_FILESYSTEM_DIRS=~/documents,~/downloads  # Comma-separated list of allowed directories
+
+# Agent Configuration
+MCP_AGENT_DIR=agents  # Directory to scan for agent files
 ```
 
 ### Configuration UI
@@ -362,6 +532,10 @@ Access the UI in your web browser at http://localhost:8501
   - `playwright_fill`: Fill an input field
   - `playwright_evaluate`: Execute JavaScript
   - `playwright_get_content`: Get the HTML content of a page
+
+### Agent Tools
+- `run_agent`: Execute a registered agent with parameters
+- `list_agents`: List all available agents and their metadata
 
 ### E-Commerce Tools
 - **Shopify:**
@@ -434,6 +608,24 @@ For a complete list of available tools, see the documentation or browse the tool
 
 ## Development
 
+### Adding a New Agent
+
+1. Create a new file in the `agents` directory (e.g., `my_agent.py`)
+2. Follow the agent template pattern:
+   ```python
+   from agent_registry import MCPAgent, register_agent
+   
+   @register_agent
+   class MyCustomAgent(MCPAgent):
+       agent_name = "my_custom_agent"
+       agent_description = "Description of what my agent does"
+       
+       def run(self, params):
+           # Agent logic here
+           return {"result": "Agent output"}
+   ```
+3. Save the file - the agent will be automatically detected and loaded
+
 ### Adding a New Tool Module
 
 1. Create a new file in the `tools` directory (e.g., `my_tool.py`)
@@ -466,12 +658,21 @@ docker run -p 8000:8000 \
 
 This mounts your local repository into the container, so changes to the code are reflected immediately (for most files).
 
+## Philosophical Perspective: The Human-AI Cognitive Partnership
+
+The MCP Tool Kit represents a paradigm shift in how we conceptualize the relationship between human intelligence and AI systems. Rather than positioning AI as a mere tool for task automation, this framework establishes a cognitive partnership where human strategic thinking and AI operational capabilities complement each other in profound ways.
+
+The agentic architecture embodies a transformative vision: AI systems that can independently interpret context, make decisions within bounded parameters, and execute complex sequences of actions—all while maintaining human oversight and strategic direction. This represents not merely a technological advance, but a fundamentally new model for human-machine collaboration.
+
+In this evolving cognitive landscape, the most successful implementations will be those that thoughtfully balance technological potential with human capabilities, creating interfaces that enhance rather than replace human decision-making and creativity.
+
 ## Troubleshooting
 
 - **Module not loading**: Check the import path and dependencies
 - **API key errors**: Verify your API keys in the `.env` file
 - **Permission errors**: Check the allowed directories in `MCP_FILESYSTEM_DIRS`
 - **Connection errors**: Ensure the server is running and the port is accessible
+- **Agent not detected**: Verify the agent file is in the correct directory and follows the required format
 
 ## License
 
