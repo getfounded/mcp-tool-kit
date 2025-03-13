@@ -22,30 +22,21 @@ def set_external_mcp(mcp):
 class BraveSearchService:
     """Service to handle Brave Search API calls"""
     api_key: str
-    rate_limit_per_second: int = 25
+    rate_limit_per_second: int = 1  # Updated to match subscription
     rate_limit_per_month: int = 15000
 
     def __post_init__(self):
+        """Initialize the request count tracking"""
         self.request_count = {
             "second": 0,
             "month": 0,
             "last_reset": datetime.now().timestamp()
         }
 
-# Fix 1: Update the rate limit to match your subscription
-
-
-@dataclass
-class BraveSearchService:
-    """Service to handle Brave Search API calls"""
-    api_key: str
-    rate_limit_per_second: int = 1  # Update to match your subscription
-    rate_limit_per_month: int = 15000
-
     def check_rate_limit(self):
         """Check if we've hit the rate limit"""
         now = datetime.now().timestamp()
-        # Fix 2: Reset counter after 1 second, not 1000
+        # Reset counter after 1 second
         if now - self.request_count["last_reset"] > 1:  # 1 second window
             self.request_count["second"] = 0
             self.request_count["last_reset"] = now
