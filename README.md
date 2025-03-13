@@ -31,7 +31,7 @@ The MCP Unified Server provides a unified interface for Claude to interact with 
 - **And many more specialized tools**
 
 ## 87 Total Tools Available
-![Claude screenshot with tools](./static/87_tools.png)
+![Claude screenshot with tools](./static/111_tools.png)
 
 ## Quickstart Guide: Deploy Your First MCP Server with Default Tools
 Note: ensure that you have git downloaded (https://git-scm.com/downloads) and Docker downloaded (https://www.docker.com/products/docker-desktop/) and running. You also must ensure the git executable file is added to path (instructions towards end of this README).
