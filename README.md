@@ -2,9 +2,55 @@
 
 A modular server implementation for Claude AI and other assistants with a variety of integrated tools, enabling Claude and other assistants to perform actions and access external resources through an elegantly designed agentic framework.
 
+Uses >=50% less code than the Python MCP SDK alone.
+
 [![PyPI version](https://img.shields.io/pypi/v/mcptoolkit.svg)](https://pypi.org/project/mcptoolkit/)
 [![Python versions](https://img.shields.io/pypi/pyversions/mcptoolkit.svg)](https://pypi.org/project/mcptoolkit/)
 [![License](https://img.shields.io/github/license/getfounded/mcp-tool-kit.svg)](https://github.com/getfounded/mcp-tool-kit/blob/main/LICENSE)
+
+### Benefits of This Approach
+
+- **Reduces Cognitive Load on Claude**: Claude doesn't need to reason about the sequence of tool calls
+- **Encapsulates Domain Knowledge**: The agent can contain domain-specific logic about how to perform tasks well in a particular vertical
+- **Simplifies Error Handling**: The agent can handle errors and retries internally without Claude's involvement
+- **Enables Complex Workflows**: Multi-step processes that would be difficult to coordinate through individual tool calls
+- **Maintains Conversational Flow**: The user isn't exposed to the complexity of the underlying system
+
+### Example Scenario
+Here's a concrete example of Claude invoking a vertical agent:
+
+```
+User: "I need a comprehensive analysis of the electric vehicle market for a presentation tomorrow."
+
+Claude: [recognizes this requires multiple tools and domain expertise]
+
+Claude: "I'll help you with that comprehensive EV market analysis. I'll need to gather the latest market data, news, and trends. This will take a moment..."
+
+[Behind the scenes, Claude calls a MarketAnalysisAgent]
+
+Claude -> MarketAnalysisAgent.analyze_market(
+    sector="electric vehicles",
+    include_news=True,
+    include_market_data=True,
+    create_presentation=True
+)
+
+[The agent orchestrates multiple tool calls using your toolkit]
+- news_search for recent EV news
+- brave_web_search for market data
+- sequential_thinking for analysis
+- write_file to save the report
+- ppt_create_presentation to generate slides
+
+[Agent returns results to Claude]
+
+Claude: "I've analyzed the electric vehicle market for you. Here are the key findings:
+1. Tesla continues to lead with 65% market share in North America
+2. BYD has overtaken VW in global sales volume
+3. Battery technology breakthroughs are accelerating adoption
+
+I've also created a presentation with detailed charts and data. You can find it saved as 'EV_Market_Analysis.pptx' in your working directory."
+```
 
 ## Quick Install
 
