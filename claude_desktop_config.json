@@ -5,7 +5,7 @@
       "args": [
         "exec",
         "-i",
-        "mcp-tool-kit-mcp-server",
+        "mcp-tool-kit-mcp-server-1",
         "python",
         "-u",
         "mcp_unified_server.py"

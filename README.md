@@ -34,7 +34,7 @@ The MCP Unified Server provides a unified interface for Claude to interact with 
 ![Claude screenshot with tools](./static/87_tools.png)
 
 ## Quickstart Guide: Deploy Your First MCP Server with Default Tools
-Note: ensure that you have git downloaded (https://git-scm.com/downloads) and Docker downloaded (https://www.docker.com/products/docker-desktop/) and running.
+Note: ensure that you have git downloaded (https://git-scm.com/downloads) and Docker downloaded (https://www.docker.com/products/docker-desktop/) and running. You also must ensure the git executable file is added to path (instructions towards end of this README).
 
 ## Docker deployment (recommended & most stable)
 1) Clone the repository:
@@ -61,7 +61,7 @@ The repository includes a sample Claude desktop configuration file (`claude_desk
       "args": [
         "exec",
         "-i",
-        "mcp-tool-kit-mcp-server",
+        "mcp-tool-kit-mcp-server-1",
         "python",
         "-u",
         "mcp_unified_server.py"
@@ -82,7 +82,7 @@ If you are getting errors running docker, it is likely that the image name is in
       "args": [
         "exec",
         "-i",
-        "mcp-tool-kit-mcp-server-1",
+        "mcp-tool-kit-mcp-server",
         "python",
         "-u",
         "mcp_unified_server.py"
@@ -102,10 +102,8 @@ pip install mcptoolkit
 mcptoolkit-server
 ```
 
-Configure Claude Desktop:
-1. Open Claude Desktop app
-2. Go to File > Settings > Developer > Edit config
-3. Add the following basic configuration:
+
+Local server basic configuration:
 
 ```json
 {
@@ -129,7 +127,7 @@ Configure Claude Desktop:
 3. Add the 'claude_desktop_configuration.json' file
 4. Save the configuration
 5. Restart the MCP server with your new tool integrated
-6. Restart and Open Claude Desktop app
+6. Restart and Open Claude Desktop app (for windows users you must use task manager to end task for all Claude instances)
 
 
 You can import this configuration in the Claude desktop app or use it as a reference to create your own.
@@ -695,6 +693,17 @@ In this evolving cognitive landscape, the most successful implementations will b
 - **Permission errors**: Check the allowed directories in `MCP_FILESYSTEM_DIRS`
 - **Connection errors**: Ensure the server is running and the port is accessible
 - **Agent not detected**: Verify the agent file is in the correct directory and follows the required format
+- **Issues with path**: Make sure that git is added to path as per the below instruciton
+
+#To add Git to the PATH on Windows, follow these steps:
+
+1) Locate Git Installation: Determine the path where Git is installed on your system. Common paths include C:\Program Files\Git\bin\git.exe and C:\Program Files\Git\cmd for a standard Git installation, or C:\Users\<username>\AppData\Local\GitHub\PortableGit_<guid>\bin and C:\Users\<username>\AppData\Local\GitHub\PortableGit_<guid>\cmd if you installed Git through GitHub for Windows or GitHub Desktop.
+
+2) Edit Environment Variables: Open the "Edit Environment Variables" app either through the Control Panel or by searching for "Edit the system environment variables" in the Start menu. Under the "System variables" section, find the "Path" variable, click "Edit...", and add the path to the Git executable and command files. Ensure there are no spaces around the semicolons separating paths.
+
+3) Save Changes: After adding the Git paths, click "OK" to save your changes. Close and reopen any command prompt windows to apply the new PATH settings.
+
+4) Verify Installation: Open a command prompt and run git --version to verify that Git is accessible from the command line.
 
 ## License
 

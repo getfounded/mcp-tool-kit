@@ -5,7 +5,7 @@ This roadmap outlines the planned development trajectory for the MCP Unified Ser
 
 - [X] **Publish to PyPI**: Add ability to install as package
 - [ ] **Agents**: Implement agents which can be called to use multiple tools at once; intended for precise, specialized vertical AI Agents
-- [ ] **CI/CD Pipeline**: Set up automated testing and deployment workflows
+- [ ] **MS Entra ID**: Add authentication for MS Entra ID to access Microsoft account services
 - [X] **Docker Support**: Create containerized deployment option
 - [ ] **Screen Reading**: Support for visually impaired
 - [ ] **Multi-agent**: Ability to enable multiple agents to work together
