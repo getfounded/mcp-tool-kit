@@ -1,6 +1,6 @@
 # MCP Tool Kit
 
-A modular server implementation for Claude AI and other assistants with a variety of integrated tools, enabling Claude and other assistants to perform actions and access external resources through an elegantly designed agentic framework.
+A modular server implementation for building high precision vertical AI agents.
 
 Uses >=50% less code than the Python MCP SDK alone.
 
