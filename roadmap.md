@@ -10,7 +10,6 @@ This roadmap outlines the planned development trajectory for the MCP Unified Ser
 - [X] **Docker Support**: Create containerized deployment option
 - [ ] **Long Term Memory**: Claude can remember context across multiple conversations/chats
 ### By April 30
-- [ ] **Desktop push notifications**: Know when claude is done running a task so you don't have to wait
 - [ ] **Computer Vision**: Image and video analysis capabilities
 - [ ] **LLM Integration**: Additional language model integrations beyond Claude
 - [ ] **Multi-agent**: Ability to enable multiple agents to work together
