@@ -346,12 +346,127 @@ try:
 except ImportError as e:
     logging.warning(f"Could not load News API tools: {e}")
 
+# Initialize Excel tools
+try:
+    from app.tools.excel import get_xlsx_tools, set_external_mcp, initialize
+
+    # Pass our MCP instance to the excel module
+    set_external_mcp(mcp)
+
+    # Initialize Excel tools
+    if initialize(mcp):
+        # Register Excel tools
+        xlsx_tools = get_xlsx_tools()
+        for tool_name, tool_func in xlsx_tools.items():
+            # Register each Excel tool with the main MCP instance
+            tool_name_str = tool_name if isinstance(
+                tool_name, str) else tool_name.value
+            mcp.tool(name=tool_name_str)(tool_func)
+
+        # Add Excel dependencies to MCP dependencies
+        mcp.dependencies.extend(["xlsxwriter"])
+
+        logging.info("Excel tools registered successfully.")
+    else:
+        logging.warning(
+            "Failed to initialize Excel tools. Make sure xlsxwriter is installed.")
+except ImportError as e:
+    logging.warning(f"Could not load Excel tools: {e}")
+
+# Initialize FRED API tools
+try:
+    from app.tools.fred import get_fred_api_tools, set_external_mcp, initialize_fred_api_service, initialize
+
+    # Pass our MCP instance to the FRED module
+    set_external_mcp(mcp)
+
+    # Initialize FRED tools with API key from environment variable
+    fred_api_key = os.environ.get("FRED_API_KEY")
+    if fred_api_key:
+        # Call the module's initialize function
+        initialize(mcp)
+
+        # Register FRED tools
+        fred_tools = get_fred_api_tools()
+        for tool_name, tool_func in fred_tools.items():
+            # Register each FRED tool with the main MCP instance
+            mcp.tool(name=tool_name)(tool_func)
+
+        # Add FRED dependencies to MCP dependencies
+        mcp.dependencies.extend(["fredapi", "pandas"])
+
+        logging.info("FRED API tools registered successfully.")
+    else:
+        logging.warning(
+            "FRED API key not configured. FRED API tools will not be available.")
+except ImportError as e:
+    logging.warning(f"Could not load FRED API tools: {e}")
+
+# Initialize Document Management tools
+try:
+    from app.tools.document_management import get_pdf_tools, set_external_mcp, initialize_pdf_service
+
+    # Pass our MCP instance to the document management module
+    set_external_mcp(mcp)
+
+    # Initialize PDF service
+    initialize_pdf_service()
+
+    # Register PDF tools
+    pdf_tools = get_pdf_tools()
+    for tool_name, tool_func in pdf_tools.items():
+        # Register each PDF tool with the main MCP instance
+        mcp.tool(name=tool_name)(tool_func)
+
+    # Add PDF dependencies to MCP dependencies
+    mcp.dependencies.extend(
+        ["PyPDF2", "pdf2image", "pytesseract", "Pillow", "reportlab"])
+
+    logging.info("Document Management tools registered successfully.")
+except ImportError as e:
+    logging.warning(f"Could not load Document Management tools: {e}")
+
+# Initialize Streamlit tools
+try:
+    from app.tools.streamlit import get_streamlit_tools, set_external_mcp, initialize
+
+    # Pass our MCP instance to the streamlit module
+    set_external_mcp(mcp)
+
+    # Initialize Streamlit tools
+    # Get custom apps directory from environment variable if set
+    apps_dir = os.environ.get("STREAMLIT_APPS_DIR")
+
+    if initialize(mcp):
+        # Register Streamlit tools
+        streamlit_tools = get_streamlit_tools()
+        for tool_name, tool_func in streamlit_tools.items():
+            # Register each Streamlit tool with the main MCP instance
+            tool_name_str = tool_name if isinstance(
+                tool_name, str) else tool_name.value
+            mcp.tool(name=tool_name_str)(tool_func)
+
+        # Add Streamlit dependencies to MCP dependencies
+        mcp.dependencies.extend(
+            ["streamlit", "pandas", "numpy", "matplotlib", "plotly"])
+
+        logging.info("Streamlit tools registered successfully.")
+    else:
+        logging.warning(
+            "Failed to initialize Streamlit tools. Make sure streamlit is installed.")
+except ImportError as e:
+    logging.warning(f"Could not load Streamlit tools: {e}")
+
+
 # Validate required environment variables
 REQUIRED_ENV_VARS = {
     "BRAVE_API_KEY": "For Brave Search functionality",
-    "BROWSERBASE_API_KEY": "For browser automation functionality",
-    "BROWSERBASE_PROJECT_ID": "For browser automation functionality",
-    "NEWS_API_KEY": "For NewsAPI functionality"
+    "NEWS_API_KEY": "For NewsAPI functionality",
+    "FRED_API_KEY": "your_fred_api_key",
+    "STREAMLIT_APPS_DIR": "/path/to/streamlit/apps",
+    "MCP_FILESYSTEM_DIRS": "/path/to/allowed/dir1,/path/to/allowed/dir2",
+    "MCP_LOG_LEVEL": "info"
+
 }
 
 missing_vars = [var for var in REQUIRED_ENV_VARS if not os.environ.get(var)]

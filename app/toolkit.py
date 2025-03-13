@@ -863,6 +863,186 @@ class MCPToolKit:
         return self.client.call_tool("fred_get_category", {"category_id": category_id})
 
     #
+    # PDF Document Management Operations
+    #
+
+    def pdf_info(self, file_path: str) -> str:
+        """
+        Get information about a PDF document.
+
+        Args:
+            file_path: Path to the PDF file.
+
+        Returns:
+            JSON string with PDF information including number of pages, file size, and metadata.
+        """
+        return self.client.call_tool("pdf_info", {"file_path": file_path})
+
+    def pdf_extract_text(self, file_path: str, pages: Optional[List[int]] = None,
+                         ocr: bool = False) -> str:
+        """
+        Extract text from a PDF document.
+
+        Args:
+            file_path: Path to the PDF file.
+            pages: List of page numbers to extract (1-indexed). If None, extracts all pages.
+            ocr: Whether to use OCR for pages with no text.
+
+        Returns:
+            JSON string with extracted text organized by page.
+        """
+        return self.client.call_tool("pdf_extract_text", {
+            "file_path": file_path,
+            "pages": pages,
+            "ocr": ocr
+        })
+
+    def pdf_extract_images(self, file_path: str, pages: Optional[List[int]] = None,
+                           min_size: int = 100) -> str:
+        """
+        Extract images from a PDF document.
+
+        Args:
+            file_path: Path to the PDF file.
+            pages: List of page numbers to extract images from (1-indexed). If None, extracts from all pages.
+            min_size: Minimum image dimension in pixels.
+
+        Returns:
+            JSON string with extracted images metadata and resource IDs.
+        """
+        return self.client.call_tool("pdf_extract_images", {
+            "file_path": file_path,
+            "pages": pages,
+            "min_size": min_size
+        })
+
+    def pdf_split(self, file_path: str, output_dir: str, pages_per_file: int = 1) -> str:
+        """
+        Split a PDF into multiple files.
+
+        Args:
+            file_path: Path to the PDF file to split.
+            output_dir: Directory to save the split files.
+            pages_per_file: Number of pages per output file.
+
+        Returns:
+            JSON string with information about the created files.
+        """
+        return self.client.call_tool("pdf_split", {
+            "file_path": file_path,
+            "output_dir": output_dir,
+            "pages_per_file": pages_per_file
+        })
+
+    def pdf_merge(self, file_paths: List[str], output_path: str) -> str:
+        """
+        Merge multiple PDF files into one.
+
+        Args:
+            file_paths: List of paths to the PDF files to merge.
+            output_path: Path to save the merged file.
+
+        Returns:
+            JSON string with information about the merged file.
+        """
+        return self.client.call_tool("pdf_merge", {
+            "file_paths": file_paths,
+            "output_path": output_path
+        })
+
+    def pdf_add_watermark(self, file_path: str, output_path: str, text: Optional[str] = None,
+                          image_path: Optional[str] = None, opacity: float = 0.3) -> str:
+        """
+        Add a watermark to a PDF document.
+
+        Args:
+            file_path: Path to the PDF file.
+            output_path: Path to save the watermarked file.
+            text: Text to use as watermark. Either text or image_path must be provided.
+            image_path: Path to image to use as watermark. Either text or image_path must be provided.
+            opacity: Opacity of the watermark (0-1).
+
+        Returns:
+            JSON string with information about the watermarking operation.
+        """
+        return self.client.call_tool("pdf_add_watermark", {
+            "file_path": file_path,
+            "output_path": output_path,
+            "text": text,
+            "image_path": image_path,
+            "opacity": opacity
+        })
+
+    def pdf_encrypt(self, file_path: str, output_path: str, user_password: str,
+                    owner_password: Optional[str] = None) -> str:
+        """
+        Encrypt a PDF document with password protection.
+
+        Args:
+            file_path: Path to the PDF file.
+            output_path: Path to save the encrypted file.
+            user_password: Password required to open the PDF.
+            owner_password: Password for full access (optional, defaults to user_password).
+
+        Returns:
+            JSON string with information about the encryption operation.
+        """
+        return self.client.call_tool("pdf_encrypt", {
+            "file_path": file_path,
+            "output_path": output_path,
+            "user_password": user_password,
+            "owner_password": owner_password
+        })
+
+    def pdf_decrypt(self, file_path: str, output_path: str, password: str) -> str:
+        """
+        Decrypt an encrypted PDF document.
+
+        Args:
+            file_path: Path to the encrypted PDF file.
+            output_path: Path to save the decrypted file.
+            password: Password to decrypt the PDF.
+
+        Returns:
+            JSON string with information about the decryption operation.
+        """
+        return self.client.call_tool("pdf_decrypt", {
+            "file_path": file_path,
+            "output_path": output_path,
+            "password": password
+        })
+
+    def pdf_get_form_fields(self, file_path: str) -> str:
+        """
+        Get all form fields in a PDF document.
+
+        Args:
+            file_path: Path to the PDF file.
+
+        Returns:
+            JSON string with form field names and their current values.
+        """
+        return self.client.call_tool("pdf_get_form_fields", {"file_path": file_path})
+
+    def pdf_fill_form(self, file_path: str, output_path: str, form_data: Dict[str, str]) -> str:
+        """
+        Fill out form fields in a PDF document.
+
+        Args:
+            file_path: Path to the PDF file.
+            output_path: Path to save the filled form.
+            form_data: Dictionary with field names as keys and field values as values.
+
+        Returns:
+            JSON string with information about the form filling operation.
+        """
+        return self.client.call_tool("pdf_fill_form", {
+            "file_path": file_path,
+            "output_path": output_path,
+            "form_data": form_data
+        })
+
+    #
     # News API Operations
     #
 

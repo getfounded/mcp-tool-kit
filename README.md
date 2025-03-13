@@ -20,14 +20,11 @@ The MCP Unified Server provides a unified interface for Claude to interact with 
 - **Time tools**: Get current time in different timezones, convert between timezones
 - **Sequential thinking**: A tool for dynamic and reflective problem-solving
 - **Brave Search**: Web and local search capabilities
-- **Browser automation**: Complete browser control via Browserbase and Playwright
-- **Browser automation**: Complete browser control via Browserbase and Playwright
+- **Browser automation**: Complete browser control via Playwright
 - **World Bank API**: Access to economic and development data
 - **News API**: Access to global news sources and articles
 - **PowerPoint**: Create and manipulate PowerPoint presentations
 - **Excel**: Create and manipulate Excel spreadsheets
-- **QuickBooks**: Financial and accounting operations
-- **Shopify**: E-commerce platform integration
 - **Yahoo Finance**: Stock market and financial data
 - **FRED**: Federal Reserve Economic Data
 - **Agentic capabilities**: Create and deploy autonomous agents that perform complex tasks
@@ -47,9 +44,12 @@ cd mcp-tool-kit
 ```
 2) You can then use Docker in one of two ways:
 Option 1 - Using docker-compose:
-```docker-compose up```
+```
+docker-compose up
+```
 Option 2 - Direct Docker command:
-```docker run -p 8000:8000 -v ~/documents:/app/documents getfounded/mcp-tool-kit:latest```
+```docker run -p 8000:8000 -v ~/documents:/app/documents getfounded/mcp-tool-kit:latest
+```
 
 The repository includes a sample Claude desktop configuration file (`claude_desktop_config.json`) that you can use:
 
@@ -135,6 +135,37 @@ Configure Claude Desktop:
 You can import this configuration in the Claude desktop app or use it as a reference to create your own.
 
 You now have immediate access to powerful capabilities including file operations, web search, time tools, and more—without requiring any API keys or complex setup.
+
+## Setting Up Environment Variables
+
+After cloning the repository, you have two options to configure your environment variables:
+
+### Option 1: Interactive Setup Script
+
+Run the setup script which will guide you through setting up your environment variables:
+
+```bash
+python setup_env.py
+```
+
+This script will create a `.env` file in the repository with your configuration.
+
+### Option 2: Manual Configuration
+
+Alternatively, you can manually create a `.env` file in the repository root with the following variables:
+
+```
+# API Keys for external services
+BRAVE_API_KEY=your_brave_api_key
+NEWS_API_KEY=your_news_api_key
+FRED_API_KEY=your_fred_api_key
+
+# Application configuration
+STREAMLIT_APPS_DIR=/path/to/streamlit/apps
+MCP_FILESYSTEM_DIRS=/path/to/allowed/dir1,/path/to/allowed/dir2
+MCP_LOG_LEVEL=info
+```
+```
 
 ## Unleashing Agentic Intelligence: Creating AI Agents with MCP Tool Kit
 
@@ -496,29 +527,6 @@ Once set up, you can ask Claude to use the tools with prompts like:
 - "Read the text file in my Downloads folder named 'project_notes.txt'."
 - "Get the latest news headlines about technology."
 
-### Local Configuration
-
-If running locally, the server can be configured using environment variables or a `.env` file in the project root:
-
-```env
-# MCP Server Configuration
-MCP_HOST=0.0.0.0
-MCP_PORT=8000
-MCP_LOG_LEVEL=info  # debug, info, warning, error
-
-# Tool API Keys
-BRAVE_API_KEY=your_brave_api_key
-BROWSERBASE_API_KEY=your_browserbase_api_key
-BROWSERBASE_PROJECT_ID=your_browserbase_project_id
-NEWS_API_KEY=your_news_api_key
-
-# File System Configuration
-MCP_FILESYSTEM_DIRS=~/documents,~/downloads  # Comma-separated list of allowed directories
-
-# Agent Configuration
-MCP_AGENT_DIR=agents  # Directory to scan for agent files
-```
-
 ### Configuration UI
 
 The package includes a web-based configuration UI:
@@ -566,23 +574,6 @@ Access the UI in your web browser at http://localhost:8501
 ### Agent Tools
 - `run_agent`: Execute a registered agent with parameters
 - `list_agents`: List all available agents and their metadata
-
-### E-Commerce Tools
-- **Shopify:**
-  - `shopify_get_products`: Get product information
-  - `shopify_create_product`: Create a new product
-  - `shopify_update_product`: Update an existing product
-  - `shopify_get_orders`: Get order information
-  - `shopify_create_order`: Create a new order
-  - `shopify_get_customers`: Get customer information
-
-### Financial Tools
-- **QuickBooks:**
-  - `quickbooks_get_accounts`: Get account information
-  - `quickbooks_get_invoices`: Get invoice information
-  - `quickbooks_create_invoice`: Create an invoice
-  - `quickbooks_get_customers`: Get customer information
-  - `quickbooks_get_reports`: Generate financial reports
 
 ### Financial Data Tools
 - **Yahoo Finance:**

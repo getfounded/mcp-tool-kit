@@ -11,7 +11,7 @@ with open("requirements.txt", encoding="utf-8") as f:
 
 setup(
     name="mcptoolkit",
-    version="1.0.1",
+    version="1.0.3",
     author="getfounded",
     author_email="jack@pivotplanpro.com",  # Add author email if available
     description="A modular server implementation for Claude AI assistants with integrated tools",

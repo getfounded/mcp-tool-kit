@@ -63,17 +63,18 @@ DEFAULT_CONFIG = {
         "time_tools": True,
         "sequential_thinking": True,
         "brave_search": True,
-        "browserbase": True,
+        "browserbase": False,
         "worldbank": True,
         "news_api": True,
         "ppt": True,
-        "data_analysis": True,
+        "data_analysis": False,
         "document_management": True,
         "yfinance": True,
         "shopify": False,
         "linkedin": False,
         "salesforce": False,
-        "outlook": False
+        "outlook": False,
+        "excel": True,
     },
     "tool_config": {
         "brave_search": {

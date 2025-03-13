@@ -7,3 +7,5 @@ global-exclude __pycache__
 global-exclude *.py[cod]
 global-exclude *.so
 global-exclude .DS_Store
+global-exclude .env
+global-exclude .venv
