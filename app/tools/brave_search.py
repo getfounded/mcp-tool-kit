@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 import logging
 
@@ -24,14 +24,12 @@ class BraveSearchService:
     api_key: str
     rate_limit_per_second: int = 1  # Updated to match subscription
     rate_limit_per_month: int = 15000
-
-    def __post_init__(self):
-        """Initialize the request count tracking"""
-        self.request_count = {
-            "second": 0,
-            "month": 0,
-            "last_reset": datetime.now().timestamp()
-        }
+    # Initialize request_count as a field with a default factory
+    request_count: dict = field(default_factory=lambda: {
+        "second": 0,
+        "month": 0,
+        "last_reset": datetime.now().timestamp()
+    })
 
     def check_rate_limit(self):
         """Check if we've hit the rate limit"""
