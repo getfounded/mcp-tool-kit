@@ -2,20 +2,25 @@
 
 This roadmap outlines the planned development trajectory for the MCP Unified Server project. As an open source initiative, we welcome contributions and collaboration across all aspects of the roadmap.
 
-
+### By March 30:
 - [X] **Publish to PyPI**: Add ability to install as package
 - [ ] **Agents**: Implement agents which can be called to use multiple tools at once; intended for precise, specialized vertical AI Agents
 - [ ] **MS Entra ID**: Add authentication for MS Entra ID to access Microsoft account services
+- [ ] **Build More Tools**: Add more API's, python libraries, custom tools
 - [X] **Docker Support**: Create containerized deployment option
-- [ ] **Screen Reading**: Support for visually impaired
-- [ ] **Multi-agent**: Ability to enable multiple agents to work together
-- [ ] **Voice Interface**: Speech recognition and synthesis integration
-- [ ] **Long-running Tasks**: Background job processing system
+- [ ] **Long Term Memory**: Claude can remember context across multiple conversations/chats
+### By April 30
 - [ ] **Computer Vision**: Image and video analysis capabilities
 - [ ] **LLM Integration**: Additional language model integrations beyond Claude
-- [ ] **Multi-modal Communication**: Support for voice, images, and text in unified interfaces
+- [ ] **Multi-agent**: Ability to enable multiple agents to work together
+- [ ] **Long-running Tasks**: Background job processing system
 - [ ] **Build More Tools**: Add more API's, python libraries, custom tools
+### By May 30
+- [ ] **Multi-modal Communication**: Support for voice, images, and text in unified interfaces
+- [ ] **Voice Interface**: Speech recognition and synthesis integration
+- [ ] **Screen Reading**: Support for visually impaired
 - [ ] **Public API access**: Hosting an API on Azure to eliminate the need to run locally
+- [ ] **Build More Tools**: Add more API's, python libraries, custom tools
 
 Tool backlog (not in any particular order:
 
