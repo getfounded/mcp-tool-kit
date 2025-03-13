@@ -30,7 +30,7 @@ The MCP Unified Server provides a unified interface for Claude to interact with 
 - **Agentic capabilities**: Create and deploy autonomous agents that perform complex tasks
 - **And many more specialized tools**
 
-## 87 Total Tools Available
+## 111 Total Tools Available
 ![Claude screenshot with tools](./static/111_tools.png)
 
 ## Quickstart Guide: Deploy Your First MCP Server with Default Tools
