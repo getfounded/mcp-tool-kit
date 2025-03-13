@@ -51,13 +51,6 @@ Claude: "I've analyzed the electric vehicle market for you. Here are the key fin
 
 I've also created a presentation with detailed charts and data. You can find it saved as 'EV_Market_Analysis.pptx' in your working directory."
 ```
-
-## Quick Install
-
-```bash
-pip install mcptoolkit
-```
-
 ## Overview
 
 The MCP Unified Server provides a unified interface for Claude to interact with various external systems and tools including:
@@ -94,7 +87,8 @@ Option 1 - Using docker-compose:
 docker-compose up
 ```
 Option 2 - Direct Docker command:
-```docker run -p 8000:8000 -v ~/documents:/app/documents getfounded/mcp-tool-kit:latest
+```
+docker run -p 8000:8000 -v ~/documents:/app/documents getfounded/mcp-tool-kit:latest
 ```
 
 The repository includes a sample Claude desktop configuration file (`claude_desktop_config.json`) that you can use:
@@ -107,7 +101,7 @@ The repository includes a sample Claude desktop configuration file (`claude_desk
       "args": [
         "exec",
         "-i",
-        "mcp-tool-kit-mcp-server-1",
+        "mcp-tool-kit-mcp-server",
         "python",
         "-u",
         "mcp_unified_server.py"
@@ -128,7 +122,7 @@ If you are getting errors running docker, it is likely that the image name is in
       "args": [
         "exec",
         "-i",
-        "mcp-tool-kit-mcp-server",
+        "mcp-tool-kit-mcp-server-1",
         "python",
         "-u",
         "mcp_unified_server.py"
