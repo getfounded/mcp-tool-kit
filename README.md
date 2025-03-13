@@ -1,4 +1,4 @@
-# MCP Tool Kit: The Secure Agentic Abstraction Layer For Vertical AI Agents
+# MCP Tool Kit
 
 A modular server implementation for Claude AI and other assistants with a variety of integrated tools, enabling Claude and other assistants to perform actions and access external resources through an elegantly designed agentic framework.
 
