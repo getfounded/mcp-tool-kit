@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-from app.agent_watcher import start_agent_watcher
-from app.agent_tools import register_agent_tools
 import sys
 import os
 from pathlib import Path
@@ -499,12 +497,6 @@ async def initialize(ctx: Context):
         "version": getattr(mcp, "version", "1.0.1"),
         "tools": tool_list
     }
-
-# Register agent tools
-register_agent_tools(mcp)
-
-# Start agent watcher for automatic agent discovery
-observer = start_agent_watcher("agents")
 
 # Start the server
 host = os.environ.get("SERVER_HOST", "0.0.0.0")

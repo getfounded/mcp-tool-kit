@@ -1,6 +1,11 @@
 .venv
 .env
-build_and_uploaad.py
+build_and_upload.py
 setup.py
 fix_upload.py
 ./dnu
+./agents
+config_ui
+launcher
+MANIFEST.in
+roadmap.md

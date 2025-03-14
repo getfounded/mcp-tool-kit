@@ -51,20 +51,6 @@ def main():
             "example": "YOUR_BRAVE_API_KEY",
             "url": "https://brave.com/search/api/"
         },
-        "BROWSERBASE_API_KEY": {
-            "description": "API key for browser automation functionality",
-            "required": True,
-            "default": existing_vars.get("BROWSERBASE_API_KEY", ""),
-            "example": "YOUR_BROWSERBASE_API_KEY",
-            "url": "https://browserbase.io/"
-        },
-        "BROWSERBASE_PROJECT_ID": {
-            "description": "Project ID for browser automation functionality",
-            "required": True,
-            "default": existing_vars.get("BROWSERBASE_PROJECT_ID", ""),
-            "example": "YOUR_BROWSERBASE_PROJECT_ID",
-            "url": "https://browserbase.io/"
-        },
         "NEWS_API_KEY": {
             "description": "API key for NewsAPI functionality",
             "required": True,
