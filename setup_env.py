@@ -77,12 +77,6 @@ def main():
             "default": existing_vars.get("MCP_FILESYSTEM_DIRS", os.path.expanduser("~")),
             "example": "/path/to/dir1,/path/to/dir2"
         },
-        "MCP_LOG_LEVEL": {
-            "description": "Logging level (debug, info, warning, error)",
-            "required": False,
-            "default": existing_vars.get("MCP_LOG_LEVEL", "info"),
-            "example": "info"
-        }
     }
 
     # Collect values from user

@@ -4,7 +4,7 @@ build_and_upload.py
 setup.py
 fix_upload.py
 ./dnu
-./agents
+.app/agents
 config_ui
 launcher
 MANIFEST.in
