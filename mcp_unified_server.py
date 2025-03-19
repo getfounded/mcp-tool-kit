@@ -18,8 +18,8 @@ logging.basicConfig(
     stream=sys.stderr
 )
 
-# Add tools directory to path to import modules
-tools_path = Path(__file__).parent / "tools"
+# Add app/tools directory to path to import modules
+tools_path = Path(__file__).parent / "app" / "tools"
 sys.path.append(str(tools_path))
 
 # Load environment variables
@@ -203,6 +203,9 @@ try:
             # Register each FRED tool with the main MCP instance
             mcp.tool(name=tool_name)(tool_func)
 
+        # Add FRED dependencies to MCP dependencies
+        mcp.dependencies.extend(["fredapi", "pandas"])
+
         logging.info("FRED API tools registered successfully.")
     else:
         logging.warning(
@@ -236,37 +239,35 @@ try:
 except ImportError as e:
     logging.warning(f"Could not load YFinance tools: {e}")
 
-# Initialize Streamlit tools
+# Initialize Excel tools
 try:
-    from app.tools.streamlit import get_streamlit_tools, set_external_mcp, initialize
+    from app.tools.excel import get_xlsx_tools, set_external_mcp, initialize_xlsx_service
 
-    # Pass our MCP instance to the streamlit module
+    # Pass our MCP instance to the xlsx module
     set_external_mcp(mcp)
 
-    # Initialize Streamlit tools
-    # Get custom apps directory from environment variable if set
-    apps_dir = os.environ.get("STREAMLIT_APPS_DIR")
+    # Initialize xlsx service
+    initialize_xlsx_service()
 
-    if initialize(mcp):
-        # Register Streamlit tools
-        streamlit_tools = get_streamlit_tools()
-        for tool_name, tool_func in streamlit_tools.items():
-            # Register each Streamlit tool with the main MCP instance
-            tool_name_str = tool_name if isinstance(
-                tool_name, str) else tool_name.value
-            mcp.tool(name=tool_name_str)(tool_func)
+    # Register xlsx tools
+    xlsx_tools = get_xlsx_tools()
+    for tool_name, tool_func in xlsx_tools.items():
+        # Register each xlsx tool with the main MCP instance
+        tool_name_str = tool_name if isinstance(
+            tool_name, str) else tool_name.value
+        mcp.tool(name=tool_name_str)(tool_func)
 
-        # Add Streamlit dependencies to MCP dependencies
-        mcp.dependencies.extend(
-            ["streamlit", "pandas", "numpy", "matplotlib", "plotly"])
+    # Add Excel dependencies to MCP dependencies
+    mcp.dependencies.extend([
+        "xlsxwriter",
+        "pandas",
+        "openpyxl",
+        "xlrd"
+    ])
 
-        logging.info("Streamlit tools registered successfully.")
-    else:
-        logging.warning(
-            "Failed to initialize Streamlit tools. Make sure streamlit is installed.")
+    logging.info("Excel tools registered successfully.")
 except ImportError as e:
-    logging.warning(f"Could not load Streamlit tools: {e}")
-
+    logging.warning(f"Could not load Excel tools: {e}")
 
 # Initialize Brave Search tools
 try:
@@ -344,67 +345,6 @@ try:
 except ImportError as e:
     logging.warning(f"Could not load News API tools: {e}")
 
-# Excel Tools Registration in mcp_unified_server.py
-
-# Initialize Excel tools
-try:
-    from app.tools.excel import get_xlsx_tools, set_external_mcp, initialize_xlsx_service
-
-    # Pass our MCP instance to the xlsx module
-    set_external_mcp(mcp)
-
-    # Initialize xlsx service
-    initialize_xlsx_service()
-
-    # Register xlsx tools
-    xlsx_tools = get_xlsx_tools()
-    for tool_name, tool_func in xlsx_tools.items():
-        # Register each xlsx tool with the main MCP instance
-        tool_name_str = tool_name if isinstance(
-            tool_name, str) else tool_name.value
-        mcp.tool(name=tool_name_str)(tool_func)
-
-    # Add Excel dependencies to MCP dependencies
-    mcp.dependencies.extend([
-        "xlsxwriter",
-        "pandas",
-        "openpyxl",
-        "xlrd"
-    ])
-
-    logging.info("Excel tools registered successfully.")
-except ImportError as e:
-    logging.warning(f"Could not load Excel tools: {e}")
-
-# Initialize FRED API tools
-try:
-    from app.tools.fred import get_fred_api_tools, set_external_mcp, initialize_fred_api_service, initialize
-
-    # Pass our MCP instance to the FRED module
-    set_external_mcp(mcp)
-
-    # Initialize FRED tools with API key from environment variable
-    fred_api_key = os.environ.get("FRED_API_KEY")
-    if fred_api_key:
-        # Call the module's initialize function
-        initialize(mcp)
-
-        # Register FRED tools
-        fred_tools = get_fred_api_tools()
-        for tool_name, tool_func in fred_tools.items():
-            # Register each FRED tool with the main MCP instance
-            mcp.tool(name=tool_name)(tool_func)
-
-        # Add FRED dependencies to MCP dependencies
-        mcp.dependencies.extend(["fredapi", "pandas"])
-
-        logging.info("FRED API tools registered successfully.")
-    else:
-        logging.warning(
-            "FRED API key not configured. FRED API tools will not be available.")
-except ImportError as e:
-    logging.warning(f"Could not load FRED API tools: {e}")
-
 # Initialize Document Management tools
 try:
     from app.tools.document_management import get_pdf_tools, set_external_mcp, initialize_pdf_service
@@ -469,7 +409,6 @@ REQUIRED_ENV_VARS = {
     "STREAMLIT_APPS_DIR": "/path/to/streamlit/apps",
     "MCP_FILESYSTEM_DIRS": "/path/to/allowed/dir1,/path/to/allowed/dir2",
     "MCP_LOG_LEVEL": "info"
-
 }
 
 missing_vars = [var for var in REQUIRED_ENV_VARS if not os.environ.get(var)]
@@ -539,18 +478,7 @@ if __name__ == "__main__":
 
     # Use configuration from environment variables if available
     # Must be 0.0.0.0 for containers
-    # Must be 0.0.0.0 for containers
     host = os.environ.get("MCP_HOST", "0.0.0.0")
-    # Check both PORT and MCP_PORT
-    port = int(os.environ.get("PORT", os.environ.get("MCP_PORT", "8000")))
-    # Default to info instead of debug
-    log_level = os.environ.get("MCP_LOG_LEVEL", "info")
-
-    # Enable detailed logging for troubleshooting
-    if log_level.lower() == "debug":
-        logging.info("Debug logging enabled")
-        logging.debug(
-            f"Environment variables: {json.dumps({k: v for k, v in os.environ.items() if not k.startswith('_')}, indent=2)}")
     # Check both PORT and MCP_PORT
     port = int(os.environ.get("PORT", os.environ.get("MCP_PORT", "8000")))
     # Default to info instead of debug
