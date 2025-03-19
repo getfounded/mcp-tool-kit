@@ -399,3 +399,317 @@ await mcp.call_tool("xlsx_close_workbook", {"filename": "sales_report.xlsx"})
 ## License
 
 This tool is provided under the same license as the MCP Unified Server.
+
+# Enhanced Excel Tool Documentation
+
+The Enhanced Excel Tool extends the existing MCP Excel functionality to include comprehensive support for reading, manipulating, and analyzing Excel and CSV files using pandas. This tool bridges the gap between Excel file management and powerful data analysis capabilities.
+
+## New Features
+
+1. **File Reading Capabilities**
+   - Read Excel files (XLSX, XLS) with customizable options
+   - Read CSV files with delimiter and encoding support
+   - List available sheets in Excel files
+
+2. **DataFrame Management**
+   - Store DataFrame objects in memory for multi-step operations
+   - List, inspect, and clear DataFrames
+   - Convert between DataFrames and Excel/CSV files
+
+3. **Data Manipulation and Analysis**
+   - Filter DataFrames by query or column conditions
+   - Sort DataFrames by one or multiple columns
+   - Group DataFrames and apply aggregation functions
+   - Generate statistical descriptions and correlations
+
+## Tool Reference
+
+### Reading Files
+
+#### `xlsx_read_excel`
+Read an Excel file into a pandas DataFrame.
+
+```python
+xlsx_read_excel(
+    filename: str,                            # Path to the Excel file
+    sheet_name: Union[str, int] = 0,          # Sheet name or index
+    output_id: str = None,                    # ID to store the DataFrame (default: filename)
+    header: Union[int, List[int], None] = 0,  # Row(s) to use as column names
+    names: List[str] = None,                  # List of custom column names
+    skiprows: Union[int, List[int]] = None    # Row indices to skip
+)
+```
+
+Example:
+```
+xlsx_read_excel("financial_data.xlsx", sheet_name="Q1_Results", output_id="q1_data")
+```
+
+#### `xlsx_read_csv`
+Read a CSV file into a pandas DataFrame.
+
+```python
+xlsx_read_csv(
+    filename: str,                            # Path to the CSV file
+    output_id: str = None,                    # ID to store the DataFrame (default: filename)
+    delimiter: str = ",",                     # Delimiter to use
+    header: Union[int, List[int], None] = 0,  # Row(s) to use as column names
+    names: List[str] = None,                  # List of custom column names
+    skiprows: Union[int, List[int]] = None,   # Row indices to skip
+    encoding: str = None                      # File encoding
+)
+```
+
+Example:
+```
+xlsx_read_csv("sales_data.csv", delimiter=";", encoding="utf-8", output_id="sales")
+```
+
+#### `xlsx_get_sheet_names`
+Get sheet names from an Excel file.
+
+```python
+xlsx_get_sheet_names(
+    filename: str  # Path to the Excel file
+)
+```
+
+Example:
+```
+xlsx_get_sheet_names("financial_data.xlsx")
+```
+
+### DataFrame Management
+
+#### `xlsx_dataframe_info`
+Get information about a DataFrame.
+
+```python
+xlsx_dataframe_info(
+    dataframe_id: str  # ID of the DataFrame in memory
+)
+```
+
+Example:
+```
+xlsx_dataframe_info("sales_data")
+```
+
+#### `xlsx_list_dataframes`
+List all DataFrames currently in memory.
+
+```python
+xlsx_list_dataframes()
+```
+
+#### `xlsx_clear_dataframe`
+Remove a DataFrame from memory.
+
+```python
+xlsx_clear_dataframe(
+    dataframe_id: str  # ID of the DataFrame to clear
+)
+```
+
+Example:
+```
+xlsx_clear_dataframe("old_data")
+```
+
+#### `xlsx_get_column_values`
+Get values from a specific column in a DataFrame.
+
+```python
+xlsx_get_column_values(
+    dataframe_id: str,  # ID of the DataFrame
+    column: str,        # Name of the column
+    unique: bool = False,  # Whether to return only unique values
+    count: bool = False    # Whether to count occurrences of each value
+)
+```
+
+Example:
+```
+xlsx_get_column_values("customer_data", "country", unique=True, count=True)
+```
+
+### Data Manipulation
+
+#### `xlsx_filter_dataframe`
+Filter a DataFrame by query or column condition.
+
+```python
+xlsx_filter_dataframe(
+    dataframe_id: str,     # ID of the DataFrame to filter
+    query: str = None,     # Query string for filtering
+    column: str = None,    # Column name to filter by (alternative to query)
+    value: Any = None,     # Value to compare with
+    operator: str = "==",  # Comparison operator
+    output_id: str = None  # ID to store the filtered DataFrame
+)
+```
+
+Examples:
+```
+xlsx_filter_dataframe("sales", query="revenue > 1000 and region == 'North'")
+xlsx_filter_dataframe("customers", column="age", value=30, operator=">")
+```
+
+#### `xlsx_sort_dataframe`
+Sort a DataFrame by columns.
+
+```python
+xlsx_sort_dataframe(
+    dataframe_id: str,                    # ID of the DataFrame to sort
+    by: Union[str, List[str]],            # Column name(s) to sort by
+    ascending: Union[bool, List[bool]] = True,  # Sort order
+    output_id: str = None                 # ID to store the sorted DataFrame
+)
+```
+
+Example:
+```
+xlsx_sort_dataframe("products", by=["category", "price"], ascending=[True, False])
+```
+
+#### `xlsx_group_dataframe`
+Group a DataFrame and apply aggregation.
+
+```python
+xlsx_group_dataframe(
+    dataframe_id: str,                         # ID of the DataFrame to group
+    by: Union[str, List[str]],                 # Column name(s) to group by
+    agg_func: Union[str, Dict[str, str]] = "mean",  # Aggregation function(s)
+    output_id: str = None                      # ID to store the grouped DataFrame
+)
+```
+
+Examples:
+```
+xlsx_group_dataframe("sales", by="region", agg_func="sum")
+xlsx_group_dataframe("orders", by=["product", "region"], 
+                    agg_func={"quantity": "sum", "price": "mean"})
+```
+
+#### `xlsx_describe_dataframe`
+Get statistical description of a DataFrame.
+
+```python
+xlsx_describe_dataframe(
+    dataframe_id: str,                    # ID of the DataFrame to describe
+    include: Union[str, List[str]] = None,  # Types of columns to include
+    exclude: Union[str, List[str]] = None,  # Types of columns to exclude
+    percentiles: List[float] = None       # List of percentiles to include
+)
+```
+
+Example:
+```
+xlsx_describe_dataframe("measurements", include=["number"])
+```
+
+#### `xlsx_get_correlation`
+Get correlation matrix for a DataFrame.
+
+```python
+xlsx_get_correlation(
+    dataframe_id: str,     # ID of the DataFrame
+    method: str = "pearson"  # Correlation method
+)
+```
+
+Example:
+```
+xlsx_get_correlation("stock_prices", method="spearman")
+```
+
+### Exporting Data
+
+#### `xlsx_dataframe_to_excel`
+Export a DataFrame to an Excel file.
+
+```python
+xlsx_dataframe_to_excel(
+    dataframe_id: str,        # ID of the DataFrame in memory
+    filename: str,            # Path to save the Excel file
+    sheet_name: str = "Sheet1",  # Name of the sheet
+    index: bool = True        # Whether to include the DataFrame index
+)
+```
+
+Example:
+```
+xlsx_dataframe_to_excel("filtered_sales", "filtered_sales_report.xlsx")
+```
+
+#### `xlsx_dataframe_to_csv`
+Export a DataFrame to a CSV file.
+
+```python
+xlsx_dataframe_to_csv(
+    dataframe_id: str,     # ID of the DataFrame in memory
+    filename: str,         # Path to save the CSV file
+    index: bool = True,    # Whether to include the DataFrame index
+    encoding: str = "utf-8",  # File encoding
+    sep: str = ","         # Delimiter to use
+)
+```
+
+Example:
+```
+xlsx_dataframe_to_csv("quarterly_data", "quarterly_report.csv", sep=";")
+```
+
+## Common Workflows
+
+### Reading and Analyzing Sales Data
+
+```
+# Read the Excel file
+xlsx_read_excel("sales_data.xlsx", sheet_name="2023", output_id="sales_2023")
+
+# Get information about the DataFrame
+xlsx_dataframe_info("sales_2023")
+
+# Filter to specific region
+xlsx_filter_dataframe("sales_2023", column="region", value="North", output_id="north_sales")
+
+# Group by product category and calculate total sales
+xlsx_group_dataframe("north_sales", by="category", 
+                    agg_func={"revenue": "sum", "units": "sum"},
+                    output_id="north_by_category")
+
+# Export the grouped data
+xlsx_dataframe_to_excel("north_by_category", "north_region_sales_by_category.xlsx")
+```
+
+### Reading CSV and Finding Correlations
+
+```
+# Read the CSV file
+xlsx_read_csv("stock_prices.csv", output_id="stocks")
+
+# Calculate correlation between stock prices
+xlsx_get_correlation("stocks", method="pearson")
+
+# Filter to relevant time period
+xlsx_filter_dataframe("stocks", query="date >= '2023-01-01' and date <= '2023-12-31'", 
+                     output_id="stocks_2023")
+
+# Calculate new correlation on filtered data
+xlsx_get_correlation("stocks_2023")
+```
+
+## Dependencies
+
+This tool requires the following Python packages:
+- xlsxwriter (required for Excel writing)
+- pandas (required for all functionality)
+- openpyxl (recommended for Excel reading)
+- xlrd (recommended for reading older Excel formats)
+
+## Technical Notes
+
+- DataFrames are stored in memory with a unique ID for reference in subsequent operations
+- File paths should be absolute or relative to the current working directory
+- Large DataFrames will be kept in memory until explicitly cleared with `xlsx_clear_dataframe`

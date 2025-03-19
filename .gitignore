@@ -4,8 +4,8 @@ build_and_upload.py
 setup.py
 fix_upload.py
 ./dnu
-.app/agents
-config_ui
-launcher
+app/agents/
+config_ui.py
+launcher.py
 MANIFEST.in
 roadmap.md

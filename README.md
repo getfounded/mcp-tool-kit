@@ -302,26 +302,6 @@ Once set up, you can ask Claude to use the tools with prompts like:
 For a complete list of available tools, see the documentation or browse the tools directory.
 For a complete list of available tools, see the documentation or browse the tools directory.
 
-## Development
-
-### Adding a New Agent
-
-1. Create a new file in the `agents` directory (e.g., `my_agent.py`)
-2. Follow the agent template pattern:
-   ```python
-   from agent_registry import MCPAgent, register_agent
-   
-   @register_agent
-   class MyCustomAgent(MCPAgent):
-       agent_name = "my_custom_agent"
-       agent_description = "Description of what my agent does"
-       
-       def run(self, params):
-           # Agent logic here
-           return {"result": "Agent output"}
-   ```
-3. Save the file - the agent will be automatically detected and loaded
-
 ### Adding a New Tool Module
 
 1. Create a new file in the `tools` directory (e.g., `my_tool.py`)
