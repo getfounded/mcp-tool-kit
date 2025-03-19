@@ -862,6 +862,333 @@ class MCPToolKit:
         """
         return self.client.call_tool("fred_get_category", {"category_id": category_id})
 
+    # Add these new methods to MCPToolKit class, after the existing Excel methods
+
+    #
+    # Excel Reading Operations
+    #
+
+    def excel_read_excel(self, filename: str, sheet_name: Union[str, int] = 0,
+                         output_id: Optional[str] = None, header: Union[int, List[int], None] = 0,
+                         names: Optional[List[str]] = None,
+                         skiprows: Union[int, List[int], None] = None) -> str:
+        """
+        Read an Excel file into a pandas DataFrame.
+
+        Args:
+            filename: Path to the Excel file.
+            sheet_name: Sheet name or index (default: 0).
+            output_id: ID to store the DataFrame in memory (default: filename).
+            header: Row(s) to use as column names (default: 0).
+            names: List of custom column names (default: None).
+            skiprows: Row indices to skip or number of rows to skip (default: None).
+
+        Returns:
+            JSON string with DataFrame information.
+        """
+        params = {
+            "filename": filename,
+            "sheet_name": sheet_name,
+            "header": header
+        }
+
+        if output_id:
+            params["output_id"] = output_id
+        if names:
+            params["names"] = names
+        if skiprows is not None:
+            params["skiprows"] = skiprows
+
+        return self.client.call_tool("xlsx_read_excel", params)
+
+    def excel_read_csv(self, filename: str, output_id: Optional[str] = None,
+                       delimiter: str = ",", header: Union[int, List[int], None] = 0,
+                       names: Optional[List[str]] = None,
+                       skiprows: Union[int, List[int], None] = None,
+                       encoding: Optional[str] = None) -> str:
+        """
+        Read a CSV file into a pandas DataFrame.
+
+        Args:
+            filename: Path to the CSV file.
+            output_id: ID to store the DataFrame in memory (default: filename).
+            delimiter: Delimiter to use (default: ",").
+            header: Row(s) to use as column names (default: 0).
+            names: List of custom column names (default: None).
+            skiprows: Row indices to skip or number of rows to skip (default: None).
+            encoding: File encoding (default: None, pandas will try to detect).
+
+        Returns:
+            JSON string with DataFrame information.
+        """
+        params = {
+            "filename": filename,
+            "delimiter": delimiter,
+            "header": header
+        }
+
+        if output_id:
+            params["output_id"] = output_id
+        if names:
+            params["names"] = names
+        if skiprows is not None:
+            params["skiprows"] = skiprows
+        if encoding:
+            params["encoding"] = encoding
+
+        return self.client.call_tool("xlsx_read_csv", params)
+
+    def excel_get_sheet_names(self, filename: str) -> str:
+        """
+        Get sheet names from an Excel file.
+
+        Args:
+            filename: Path to the Excel file.
+
+        Returns:
+            JSON string with sheet names.
+        """
+        return self.client.call_tool("xlsx_get_sheet_names", {"filename": filename})
+
+    #
+    # DataFrame Management Operations
+    #
+
+    def excel_dataframe_info(self, dataframe_id: str) -> str:
+        """
+        Get information about a DataFrame.
+
+        Args:
+            dataframe_id: ID of the DataFrame in memory.
+
+        Returns:
+            JSON string with DataFrame information.
+        """
+        return self.client.call_tool("xlsx_dataframe_info", {"dataframe_id": dataframe_id})
+
+    def excel_list_dataframes(self) -> str:
+        """
+        List all DataFrames currently in memory.
+
+        Returns:
+            JSON string with list of DataFrame IDs.
+        """
+        return self.client.call_tool("xlsx_list_dataframes", {})
+
+    def excel_clear_dataframe(self, dataframe_id: str) -> str:
+        """
+        Remove a DataFrame from memory.
+
+        Args:
+            dataframe_id: ID of the DataFrame to clear.
+
+        Returns:
+            JSON string with the result.
+        """
+        return self.client.call_tool("xlsx_clear_dataframe", {"dataframe_id": dataframe_id})
+
+    def excel_get_column_values(self, dataframe_id: str, column: str,
+                                unique: bool = False, count: bool = False) -> str:
+        """
+        Get values from a specific column in a DataFrame.
+
+        Args:
+            dataframe_id: ID of the DataFrame.
+            column: Name of the column to get values from.
+            unique: Whether to return only unique values (default: False).
+            count: Whether to count occurrences of each value (default: False).
+
+        Returns:
+            JSON string with the column values.
+        """
+        return self.client.call_tool("xlsx_get_column_values", {
+            "dataframe_id": dataframe_id,
+            "column": column,
+            "unique": unique,
+            "count": count
+        })
+
+    #
+    # DataFrame Manipulation Operations
+    #
+
+    def excel_filter_dataframe(self, dataframe_id: str, query: Optional[str] = None,
+                               column: Optional[str] = None, value: Any = None,
+                               operator: str = "==", output_id: Optional[str] = None) -> str:
+        """
+        Filter a DataFrame by query or column condition.
+
+        Args:
+            dataframe_id: ID of the DataFrame to filter.
+            query: Query string for filtering (e.g., "column > 5 and column2 == 'value'").
+            column: Column name to filter by (alternative to query).
+            value: Value to compare with (used with column and operator).
+            operator: Comparison operator (used with column and value): ==, !=, >, >=, <, <=, in, contains.
+            output_id: ID to store the filtered DataFrame (default: dataframe_id + "_filtered").
+
+        Returns:
+            JSON string with the result.
+        """
+        params = {"dataframe_id": dataframe_id}
+
+        if query:
+            params["query"] = query
+        if column:
+            params["column"] = column
+        if value is not None:
+            params["value"] = value
+
+        params["operator"] = operator
+
+        if output_id:
+            params["output_id"] = output_id
+
+        return self.client.call_tool("xlsx_filter_dataframe", params)
+
+    def excel_sort_dataframe(self, dataframe_id: str, by: Union[str, List[str]],
+                             ascending: Union[bool, List[bool]] = True,
+                             output_id: Optional[str] = None) -> str:
+        """
+        Sort a DataFrame by columns.
+
+        Args:
+            dataframe_id: ID of the DataFrame to sort.
+            by: Column name(s) to sort by (string or list of strings).
+            ascending: Whether to sort in ascending order (boolean or list of booleans).
+            output_id: ID to store the sorted DataFrame (default: dataframe_id + "_sorted").
+
+        Returns:
+            JSON string with the result.
+        """
+        params = {
+            "dataframe_id": dataframe_id,
+            "by": by,
+            "ascending": ascending
+        }
+
+        if output_id:
+            params["output_id"] = output_id
+
+        return self.client.call_tool("xlsx_sort_dataframe", params)
+
+    def excel_group_dataframe(self, dataframe_id: str, by: Union[str, List[str]],
+                              agg_func: Union[str, Dict[str, str]] = "mean",
+                              output_id: Optional[str] = None) -> str:
+        """
+        Group a DataFrame and apply aggregation.
+
+        Args:
+            dataframe_id: ID of the DataFrame to group.
+            by: Column name(s) to group by (string or list of strings).
+            agg_func: Aggregation function(s) to apply (string or dict of column->function).
+            output_id: ID to store the grouped DataFrame (default: dataframe_id + "_grouped").
+
+        Returns:
+            JSON string with the result.
+        """
+        params = {
+            "dataframe_id": dataframe_id,
+            "by": by,
+            "agg_func": agg_func
+        }
+
+        if output_id:
+            params["output_id"] = output_id
+
+        return self.client.call_tool("xlsx_group_dataframe", params)
+
+    def excel_describe_dataframe(self, dataframe_id: str,
+                                 include: Union[str, List[str], None] = None,
+                                 exclude: Union[str, List[str], None] = None,
+                                 percentiles: Optional[List[float]] = None) -> str:
+        """
+        Get statistical description of a DataFrame.
+
+        Args:
+            dataframe_id: ID of the DataFrame to describe.
+            include: Types of columns to include (None, 'all', or list of dtypes).
+            exclude: Types of columns to exclude (None or list of dtypes).
+            percentiles: List of percentiles to include in output (default: [0.25, 0.5, 0.75]).
+
+        Returns:
+            JSON string with the statistical description.
+        """
+        params = {"dataframe_id": dataframe_id}
+
+        if include is not None:
+            params["include"] = include
+        if exclude is not None:
+            params["exclude"] = exclude
+        if percentiles:
+            params["percentiles"] = percentiles
+
+        return self.client.call_tool("xlsx_describe_dataframe", params)
+
+    def excel_get_correlation(self, dataframe_id: str, method: str = "pearson") -> str:
+        """
+        Get correlation matrix for a DataFrame.
+
+        Args:
+            dataframe_id: ID of the DataFrame.
+            method: Correlation method ('pearson', 'kendall', or 'spearman').
+
+        Returns:
+            JSON string with the correlation matrix.
+        """
+        return self.client.call_tool("xlsx_get_correlation", {
+            "dataframe_id": dataframe_id,
+            "method": method
+        })
+
+    #
+    # DataFrame Export Operations
+    #
+
+    def excel_dataframe_to_excel(self, dataframe_id: str, filename: str,
+                                 sheet_name: str = "Sheet1", index: bool = True) -> str:
+        """
+        Export a DataFrame to an Excel file.
+
+        Args:
+            dataframe_id: ID of the DataFrame in memory.
+            filename: Path to save the Excel file.
+            sheet_name: Name of the sheet (default: "Sheet1").
+            index: Whether to include the DataFrame index (default: True).
+
+        Returns:
+            JSON string with the result.
+        """
+        return self.client.call_tool("xlsx_dataframe_to_excel", {
+            "dataframe_id": dataframe_id,
+            "filename": filename,
+            "sheet_name": sheet_name,
+            "index": index
+        })
+
+    def excel_dataframe_to_csv(self, dataframe_id: str, filename: str,
+                               index: bool = True, encoding: str = "utf-8",
+                               sep: str = ",") -> str:
+        """
+        Export a DataFrame to a CSV file.
+
+        Args:
+            dataframe_id: ID of the DataFrame in memory.
+            filename: Path to save the CSV file.
+            index: Whether to include the DataFrame index (default: True).
+            encoding: File encoding (default: "utf-8").
+            sep: Delimiter to use (default: ",").
+
+        Returns:
+            JSON string with the result.
+        """
+        return self.client.call_tool("xlsx_dataframe_to_csv", {
+            "dataframe_id": dataframe_id,
+            "filename": filename,
+            "index": index,
+            "encoding": encoding,
+            "sep": sep
+        })
+
     #
     # PDF Document Management Operations
     #
