@@ -344,30 +344,35 @@ try:
 except ImportError as e:
     logging.warning(f"Could not load News API tools: {e}")
 
+# Excel Tools Registration in mcp_unified_server.py
+
 # Initialize Excel tools
 try:
-    from app.tools.excel import get_xlsx_tools, set_external_mcp, initialize
+    from app.tools.excel import get_xlsx_tools, set_external_mcp, initialize_xlsx_service
 
-    # Pass our MCP instance to the excel module
+    # Pass our MCP instance to the xlsx module
     set_external_mcp(mcp)
 
-    # Initialize Excel tools
-    if initialize(mcp):
-        # Register Excel tools
-        xlsx_tools = get_xlsx_tools()
-        for tool_name, tool_func in xlsx_tools.items():
-            # Register each Excel tool with the main MCP instance
-            tool_name_str = tool_name if isinstance(
-                tool_name, str) else tool_name.value
-            mcp.tool(name=tool_name_str)(tool_func)
+    # Initialize xlsx service
+    initialize_xlsx_service()
 
-        # Add Excel dependencies to MCP dependencies
-        mcp.dependencies.extend(["xlsxwriter"])
+    # Register xlsx tools
+    xlsx_tools = get_xlsx_tools()
+    for tool_name, tool_func in xlsx_tools.items():
+        # Register each xlsx tool with the main MCP instance
+        tool_name_str = tool_name if isinstance(
+            tool_name, str) else tool_name.value
+        mcp.tool(name=tool_name_str)(tool_func)
 
-        logging.info("Excel tools registered successfully.")
-    else:
-        logging.warning(
-            "Failed to initialize Excel tools. Make sure xlsxwriter is installed.")
+    # Add Excel dependencies to MCP dependencies
+    mcp.dependencies.extend([
+        "xlsxwriter",
+        "pandas",
+        "openpyxl",
+        "xlrd"
+    ])
+
+    logging.info("Excel tools registered successfully.")
 except ImportError as e:
     logging.warning(f"Could not load Excel tools: {e}")
 
