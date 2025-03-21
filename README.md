@@ -1,6 +1,6 @@
 # MCP Tool Kit
 
-A modular server implementation for building high precision vertical AI agents.
+A modular server implementation for building high precision vertical AI agents. Intended for use building high precision vertical AI agents, but can deploy to gain access to general tool funcationality.
 
 Uses >=50% less code than the Python MCP SDK alone.
 
@@ -69,7 +69,7 @@ The MCP Unified Server provides a unified interface for Claude to interact with 
 - **Agentic capabilities**: Create and deploy autonomous agents that perform complex tasks
 - **And many more specialized tools**
 
-## 111 Total Tools Available
+## 123 Total Tools Available
 ![Claude screenshot with tools](./static/123_tools.png)
 
 ## Quickstart Guide: Deploy Your First MCP Server with Default Tools
