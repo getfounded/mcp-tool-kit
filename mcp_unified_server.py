@@ -345,6 +345,32 @@ try:
 except ImportError as e:
     logging.warning(f"Could not load News API tools: {e}")
 
+# Initialize VAPI tools
+try:
+    from app.tools.vapi import get_vapi_tools, set_external_mcp, initialize_vapi_service
+
+    # Pass our MCP instance to the VAPI module
+    set_external_mcp(mcp)
+
+    # Initialize VAPI tools
+    if initialize_vapi_service():
+        # Register VAPI tools
+        vapi_tools = get_vapi_tools()
+        for tool_name, tool_func in vapi_tools.items():
+            # Register each VAPI tool with the main MCP instance
+            tool_name_str = tool_name if isinstance(
+                tool_name, str) else tool_name.value
+            mcp.tool(name=tool_name_str)(tool_func)
+
+        # Add VAPI dependencies to MCP dependencies
+        mcp.dependencies.extend(["vapi"])
+
+        logging.info("VAPI tools registered successfully.")
+    else:
+        logging.warning("Failed to initialize VAPI tools.")
+except ImportError as e:
+    logging.warning(f"Could not load VAPI tools: {e}")
+
 # Initialize Document Management tools
 try:
     from app.tools.document_management import get_pdf_tools, set_external_mcp, initialize_pdf_service
@@ -408,7 +434,8 @@ REQUIRED_ENV_VARS = {
     "FRED_API_KEY": "your_fred_api_key",
     "STREAMLIT_APPS_DIR": "/path/to/streamlit/apps",
     "MCP_FILESYSTEM_DIRS": "/path/to/allowed/dir1,/path/to/allowed/dir2",
-    "MCP_LOG_LEVEL": "info"
+    "MCP_LOG_LEVEL": "info",
+    "VAPID_API_KEY": "your_vapid_api_key",
 }
 
 missing_vars = [var for var in REQUIRED_ENV_VARS if not os.environ.get(var)]

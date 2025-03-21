@@ -1190,6 +1190,175 @@ class MCPToolKit:
         })
 
     #
+    # VAPI Phone Call Operations
+    #
+
+    def vapi_make_call(self, to: str, assistant_id: str,
+                       from_number: str = None,
+                       assistant_options: dict = None,
+                       server_url: str = None) -> str:
+        """
+        Make a phone call using VAPI.
+
+        Args:
+            to: Phone number to call (E.164 format recommended, e.g., +12125551234)
+            assistant_id: ID of the assistant to use for the call
+            from_number: Optional phone number to display as caller ID
+            assistant_options: Optional dictionary of assistant configuration options
+            server_url: Optional server URL for call events
+
+        Returns:
+            JSON string with call details including call ID, status, and timestamps
+        """
+        params = {
+            "to": to,
+            "assistant_id": assistant_id
+        }
+
+        if from_number:
+            params["from_number"] = from_number
+        if assistant_options:
+            params["assistant_options"] = assistant_options
+        if server_url:
+            params["server_url"] = server_url
+
+        return self.client.call_tool("vapi_make_call", params)
+
+    def vapi_list_calls(self, limit: int = 10,
+                        before: str = None,
+                        after: str = None,
+                        status: str = None) -> str:
+        """
+        List phone calls made through VAPI.
+
+        Args:
+            limit: Maximum number of calls to return (default: 10)
+            before: Return calls created before this cursor
+            after: Return calls created after this cursor
+            status: Filter calls by status (e.g., 'queued', 'ringing', 'in-progress', 'completed')
+
+        Returns:
+            JSON string with list of calls and pagination details
+        """
+        params = {"limit": limit}
+
+        if before:
+            params["before"] = before
+        if after:
+            params["after"] = after
+        if status:
+            params["status"] = status
+
+        return self.client.call_tool("vapi_list_calls", params)
+
+    def vapi_get_call(self, call_id: str) -> str:
+        """
+        Get detailed information about a specific call.
+
+        Args:
+            call_id: ID of the call to retrieve
+
+        Returns:
+            JSON string with detailed call information including status, timestamps, and metadata
+        """
+        return self.client.call_tool("vapi_get_call", {"call_id": call_id})
+
+    def vapi_end_call(self, call_id: str) -> str:
+        """
+        End an ongoing call.
+
+        Args:
+            call_id: ID of the call to end
+
+        Returns:
+            JSON string with the result of the operation
+        """
+        return self.client.call_tool("vapi_end_call", {"call_id": call_id})
+
+    def vapi_get_recordings(self, call_id: str) -> str:
+        """
+        Get recordings for a specific call.
+
+        Args:
+            call_id: ID of the call to get recordings for
+
+        Returns:
+            JSON string with recording metadata including URLs, durations, and timestamps
+        """
+        return self.client.call_tool("vapi_get_recordings", {"call_id": call_id})
+
+    def vapi_add_human(self, call_id: str,
+                       phone_number: str = None,
+                       transfer: bool = False) -> str:
+        """
+        Add a human participant to a call.
+
+        Args:
+            call_id: ID of the call to add the human to
+            phone_number: Phone number of the human to add
+            transfer: Whether to transfer the call to the human (default: False)
+
+        Returns:
+            JSON string with the result of the operation
+        """
+        params = {"call_id": call_id}
+
+        if phone_number:
+            params["phone_number"] = phone_number
+        if transfer is not None:
+            params["transfer"] = transfer
+
+        return self.client.call_tool("vapi_add_human", params)
+
+    def vapi_pause_call(self, call_id: str) -> str:
+        """
+        Pause an ongoing call.
+
+        Args:
+            call_id: ID of the call to pause
+
+        Returns:
+            JSON string with the result of the operation
+        """
+        return self.client.call_tool("vapi_pause_call", {"call_id": call_id})
+
+    def vapi_resume_call(self, call_id: str) -> str:
+        """
+        Resume a paused call.
+
+        Args:
+            call_id: ID of the call to resume
+
+        Returns:
+            JSON string with the result of the operation
+        """
+        return self.client.call_tool("vapi_resume_call", {"call_id": call_id})
+
+    def vapi_send_event(self, call_id: str,
+                        event_type: str,
+                        data: dict = None) -> str:
+        """
+        Send a custom event to a call.
+
+        Args:
+            call_id: ID of the call to send the event to
+            event_type: Type of event to send
+            data: Optional data payload for the event
+
+        Returns:
+            JSON string with the result of the operation
+        """
+        params = {
+            "call_id": call_id,
+            "event_type": event_type
+        }
+
+        if data:
+            params["data"] = data
+
+        return self.client.call_tool("vapi_send_event", params)
+
+    #
     # PDF Document Management Operations
     #
 

@@ -31,3 +31,4 @@ fastapi>=0.106.0
 xlsxwriter
 openpyxl
 xlrd
+vapi>=0.1.0
