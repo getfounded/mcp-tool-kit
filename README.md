@@ -1,6 +1,6 @@
 # MCP Tool Kit
 
-A modular server implementation for building high precision vertical AI agents. Intended for use building high precision vertical AI agents, but can deploy to gain access to general tool funcationality.
+A modular server implementation for building high precision vertical AI agents. Intended for use building high precision vertical AI agents, but can deploy to gain access to general tool functionality.
 
 Uses >=50% less code than the Python MCP SDK alone.
 
