@@ -269,6 +269,7 @@ try:
 except ImportError as e:
     logging.warning(f"Could not load Excel tools: {e}")
 
+
 # Initialize Brave Search tools
 try:
     from app.tools.brave_search import get_brave_search_tools, set_external_mcp, initialize_brave_search
