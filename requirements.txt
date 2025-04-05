@@ -1,34 +1,58 @@
-mcp>=0.4.1
-newsapi-python>=0.2.7
-python-dotenv>=1.0.1
-httpx>=0.27.0
-pillow>=10.2.0
+# Core Dependencies
+mcp>=1.6.0
+python-dotenv>=1.1.0
 pydantic>=2.7.3
-pandas>=2.2.1
-requests>=2.32.3
-python-pptx>=0.6.22
-nltk>=3.8.1
-psutil>=5.9.8
-simple_salesforce>=1.12.5
-seaborn>=0.13.2
-matplotlib>=3.8.4
-pdf2image>=1.17.0
-PyPDF2>=3.0.1
-pytesseract>=0.3.10
-aiohttp>=3.9.5
-playwright>=1.43.1
-yfinance>=0.2.42
-fredapi>=0.5.1
-streamlit>=1.32.2
-pyyaml>=6.0.1
 setuptools>=69.2.0
+pyyaml>=6.0.1
+
+# Web and API Related
+requests>=2.32.3
+httpx>=0.27.0
+aiohttp>=3.9.5
+fastapi>=0.106.0
 uvicorn>=0.34.0
-watchdog>=3.0.0
-reportlab>=3.6.15
+
+# Data Analysis
+pandas>=2.2.3
+numpy>=2.2.4
 scipy>=1.12.2
 scikit-learn>=1.3.2
-fastapi>=0.106.0
-xlsxwriter
-openpyxl
-xlrd
-vapi
+
+# Data Visualization
+matplotlib>=3.8.4
+seaborn>=0.13.2
+plotly>=5.15.0
+
+# Document Processing
+python-pptx>=0.6.22
+PyPDF2>=3.0.1
+reportlab>=3.6.15
+pdf2image>=1.17.0
+pytesseract>=0.3.10
+pillow>=10.2.0
+
+# Excel Handling
+xlsxwriter>=3.1.0
+openpyxl>=3.1.2
+xlrd>=2.0.1
+
+# Web Automation
+playwright>=1.43.1
+
+# Text Processing
+nltk>=3.8.1
+
+# External APIs
+newsapi-python>=0.2.7
+yfinance>=0.2.42
+fredapi>=0.5.1
+vapi-python>=0.1.9
+simple_salesforce>=1.12.5
+
+# Web Apps
+streamlit>=1.32.2
+
+# Development and Testing
+pytest>=7.3.1
+watchdog>=3.0.0
+psutil>=5.9.8

@@ -10,6 +10,7 @@ from mcp.server.fastmcp import Context
 from app.tools.base.registry import register_tool
 from app.tools.fred.service import get_service
 
+
 @register_tool(category="fred")
 async def fred_get_series(
     series_id: str,

@@ -57,8 +57,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     xvfb \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements and install dependencies - with proper dependency handling
-# Copy requirements and install dependencies - with proper dependency handling
+# Install system dependencies for PyAudio
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libasound2-dev \
+    portaudio19-dev \
+    python3-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Then install Python packages
 COPY requirements.txt .
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt

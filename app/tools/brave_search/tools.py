@@ -8,11 +8,12 @@ from mcp.server.fastmcp import Context
 from app.tools.base.registry import register_tool
 from app.tools.brave_search.service import get_service
 
+
 @register_tool(category="search")
 async def brave_web_search(
-    query: str, 
-    count: int = 10, 
-    offset: int = 0, 
+    query: str,
+    count: int = 10,
+    offset: int = 0,
     ctx: Context = None
 ) -> str:
     """Performs a web search using the Brave Search API, ideal for general queries, news, articles, and online content.
@@ -31,8 +32,8 @@ async def brave_web_search(
 
 @register_tool(category="search")
 async def brave_local_search(
-    query: str, 
-    count: int = 5, 
+    query: str,
+    count: int = 5,
     ctx: Context = None
 ) -> str:
     """Searches for local businesses and places using Brave's Local Search API.

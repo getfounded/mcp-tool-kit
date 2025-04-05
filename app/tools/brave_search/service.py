@@ -10,55 +10,58 @@ from typing import Dict, List, Any, Optional, Union
 
 from app.tools.base.service import ToolServiceBase
 
+
 @dataclass
 class BraveSearchService(ToolServiceBase):
     """Service to handle Brave Search API calls"""
-    
+
     api_key: Optional[str] = None
     rate_limit_per_second: int = 1  # Updated to match subscription
     rate_limit_per_month: int = 15000
-    
+
     # Initialize request_count as a field with a default factory
     request_count: dict = field(default_factory=lambda: {
         "second": 0,
         "month": 0,
         "last_reset": datetime.now().timestamp()
     })
-    
+
     def __post_init__(self):
         """Post-initialization setup"""
         super().__init__()
         if not self.api_key:
             self.api_key = self.get_env_var("BRAVE_API_KEY")
-    
+
     def initialize(self) -> bool:
         """
         Initialize the Brave Search service.
-        
+
         Returns:
             True if initialization was successful, False otherwise
         """
         try:
             import httpx  # Test if httpx is installed
-            
+
             if not self.api_key:
                 self.logger.error("Brave Search API key is not configured")
                 return False
-                
+
             self.initialized = True
             self.logger.info("Brave Search service initialized successfully")
             return True
         except ImportError:
-            self.logger.error("httpx library not installed. Please install with 'pip install httpx'")
+            self.logger.error(
+                "httpx library not installed. Please install with 'pip install httpx'")
             return False
         except Exception as e:
-            self.logger.error(f"Failed to initialize Brave Search service: {str(e)}")
+            self.logger.error(
+                f"Failed to initialize Brave Search service: {str(e)}")
             return False
 
     def check_rate_limit(self):
         """
         Check if we've hit the rate limit.
-        
+
         Raises:
             ValueError: If rate limit has been exceeded
         """
@@ -78,12 +81,12 @@ class BraveSearchService(ToolServiceBase):
     async def perform_web_search(self, query: str, count: int = 10, offset: int = 0) -> str:
         """
         Execute a web search using Brave Search API.
-        
+
         Args:
             query: Search query
             count: Number of results to return
             offset: Offset for pagination
-            
+
         Returns:
             Formatted search results
         """
@@ -134,11 +137,11 @@ class BraveSearchService(ToolServiceBase):
     async def perform_local_search(self, query: str, count: int = 5) -> str:
         """
         Execute a local search using Brave Search API.
-        
+
         Args:
             query: Search query
             count: Number of results to return
-            
+
         Returns:
             Formatted search results for local businesses
         """
@@ -258,10 +261,11 @@ Description: {desc_data.get('descriptions', {}).get(poi.get('id', ''), 'No descr
 # Singleton instance
 _service_instance = None
 
+
 def get_service() -> BraveSearchService:
     """
     Get or initialize the Brave Search service singleton.
-    
+
     Returns:
         BraveSearchService instance
     """

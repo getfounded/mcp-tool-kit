@@ -10,24 +10,25 @@ from typing import Dict, List, Any, Optional, Union
 
 from app.tools.base.service import ToolServiceBase
 
+
 class FREDAPIService(ToolServiceBase):
     """Service to handle FRED API operations"""
 
     def __init__(self, api_key=None):
         """
         Initialize the FRED API service.
-        
+
         Args:
             api_key: Optional API key (will use environment variable if not provided)
         """
         super().__init__()
         self.api_key = api_key or self.get_env_var("FRED_API_KEY")
         self.client = None
-    
+
     def initialize(self) -> bool:
         """
         Initialize the FRED API client.
-        
+
         Returns:
             True if initialization was successful, False otherwise
         """
@@ -42,17 +43,18 @@ class FREDAPIService(ToolServiceBase):
                 "fredapi module not installed. Please install it with 'pip install fredapi'")
             return False
         except Exception as e:
-            self.logger.error(f"Failed to initialize FRED API client: {str(e)}")
+            self.logger.error(
+                f"Failed to initialize FRED API client: {str(e)}")
             return False
 
     def get_series(self, series_id, **kwargs):
         """
         Get data for a FRED series.
-        
+
         Args:
             series_id: The FRED series ID
             **kwargs: Additional parameters for the FRED API
-            
+
         Returns:
             Dictionary with series data
         """
@@ -66,11 +68,11 @@ class FREDAPIService(ToolServiceBase):
     def search(self, search_text, **kwargs):
         """
         Search for FRED series.
-        
+
         Args:
             search_text: Text to search for
             **kwargs: Additional parameters for the FRED API
-            
+
         Returns:
             Dictionary with search results
         """
@@ -84,10 +86,10 @@ class FREDAPIService(ToolServiceBase):
     def get_series_info(self, series_id):
         """
         Get metadata about a FRED series.
-        
+
         Args:
             series_id: The FRED series ID
-            
+
         Returns:
             Dictionary with series information
         """
@@ -101,10 +103,10 @@ class FREDAPIService(ToolServiceBase):
     def get_category(self, category_id=0):
         """
         Get information about a FRED category.
-        
+
         Args:
             category_id: The FRED category ID
-            
+
         Returns:
             Dictionary with category information
         """
@@ -175,10 +177,11 @@ class FREDAPIService(ToolServiceBase):
 # Singleton instance
 _service_instance = None
 
+
 def get_service() -> FREDAPIService:
     """
     Get or initialize the FRED API service singleton.
-    
+
     Returns:
         FREDAPIService instance
     """

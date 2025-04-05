@@ -19,4 +19,4 @@ external systems and tools including:
 For more information, visit: https://github.com/getfounded/mcp-tool-kit
 """
 
-__version__ = "0.1.0"
+__version__ = "1.1.0"

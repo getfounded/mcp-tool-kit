@@ -1,8 +1,11 @@
+#!/usr/bin/env python3
+"""
+MCP Toolkit client for making API calls to the MCP server.
+"""
 import requests
 import json
 import logging
 from typing import Dict, Any, Optional
-
 
 class MCPClient:
     """Custom client for interacting with MCP (Model Context Protocol) server."""
