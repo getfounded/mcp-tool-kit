@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/getfounded-mcp-tool-kit-badge.png)](https://mseep.ai/app/getfounded-mcp-tool-kit)
+
 # MCP Tool Kit
 
 A modular server implementation for building high precision vertical AI agents. Intended for use building high precision vertical AI agents, but can deploy to gain access to general tool functionality.
