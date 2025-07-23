@@ -25,7 +25,7 @@ const config = {
   deploymentBranch: 'gh-pages',
   trailingSlash: false,
 
-  onBrokenLinks: 'warn',
+  onBrokenLinks: 'ignore',
   onBrokenMarkdownLinks: 'warn',
 
   // Even if you don't use internationalization, you can use this field to set
@@ -46,11 +46,7 @@ const config = {
           editUrl:
             'https://github.com/getfounded/mcp-tool-kit/tree/main/docs/',
         },
-        blog: {
-          showReadingTime: true,
-          editUrl:
-            'https://github.com/getfounded/mcp-tool-kit/tree/main/docs/',
-        },
+        blog: false,
         theme: {
           customCss: './src/css/custom.css',
         },
