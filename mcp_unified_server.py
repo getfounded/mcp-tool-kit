@@ -389,7 +389,7 @@ try:
 
     # Add PDF dependencies to MCP dependencies
     mcp.dependencies.extend(
-        ["PyPDF2", "pdf2image", "pytesseract", "Pillow", "reportlab"])
+        ["pypdf", "pdf2image", "pytesseract", "Pillow", "reportlab"])
 
     logging.info("Document Management tools registered successfully.")
 except ImportError as e:

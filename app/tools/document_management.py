@@ -8,7 +8,7 @@ import tempfile
 from typing import List, Dict, Any, Optional, Union
 
 # PDF processing libraries
-import PyPDF2
+import pypdf
 from pdf2image import convert_from_path
 from PIL import Image as PILImage
 import pytesseract
@@ -39,7 +39,7 @@ class PDFService:
         """Get information about a PDF file"""
         try:
             with open(file_path, 'rb') as file:
-                pdf = PyPDF2.PdfReader(file)
+                pdf = pypdf.PdfReader(file)
 
                 # Extract basic information
                 info = {
@@ -73,9 +73,9 @@ class PDFService:
                 "total_text_length": 0
             }
 
-            # Method 1: Use PyPDF2 for text extraction
+            # Method 1: Use pypdf for text extraction
             with open(file_path, 'rb') as file:
-                pdf = PyPDF2.PdfReader(file)
+                pdf = pypdf.PdfReader(file)
 
                 # If pages not specified, extract all pages
                 if pages is None:
@@ -141,7 +141,7 @@ class PDFService:
             if pages is None:
                 # Get total pages
                 with open(file_path, 'rb') as file:
-                    pdf = PyPDF2.PdfReader(file)
+                    pdf = pypdf.PdfReader(file)
                     pages = list(range(1, len(pdf.pages) + 1))
 
             # Convert specified pages
@@ -197,7 +197,7 @@ class PDFService:
 
             # Open the source PDF
             with open(file_path, 'rb') as file:
-                pdf = PyPDF2.PdfReader(file)
+                pdf = pypdf.PdfReader(file)
                 total_pages = len(pdf.pages)
 
                 # Calculate number of files needed
@@ -213,7 +213,7 @@ class PDFService:
                     end_page = min(start_page + pages_per_file, total_pages)
 
                     # Create new PDF writer
-                    pdf_writer = PyPDF2.PdfWriter()
+                    pdf_writer = pypdf.PdfWriter()
 
                     # Add pages to the writer
                     for page_num in range(start_page, end_page):
@@ -242,7 +242,7 @@ class PDFService:
         """Merge multiple PDFs into a single file"""
         try:
             # Create PDF writer
-            pdf_writer = PyPDF2.PdfWriter()
+            pdf_writer = pypdf.PdfWriter()
 
             # Track pages from each source
             source_info = []
@@ -250,7 +250,7 @@ class PDFService:
             # Process each input file
             for file_path in file_paths:
                 with open(file_path, 'rb') as file:
-                    pdf = PyPDF2.PdfReader(file)
+                    pdf = pypdf.PdfReader(file)
 
                     # Record source info
                     source_info.append({
@@ -345,13 +345,13 @@ class PDFService:
 
             # Open the watermark PDF
             with open(watermark_path, 'rb') as watermark_file:
-                watermark_pdf = PyPDF2.PdfReader(watermark_file)
+                watermark_pdf = pypdf.PdfReader(watermark_file)
                 watermark_page = watermark_pdf.pages[0]
 
             # Open the source PDF
             with open(file_path, 'rb') as file:
-                pdf = PyPDF2.PdfReader(file)
-                pdf_writer = PyPDF2.PdfWriter()
+                pdf = pypdf.PdfReader(file)
+                pdf_writer = pypdf.PdfWriter()
 
                 # Apply watermark to each page
                 for page in pdf.pages:
@@ -379,8 +379,8 @@ class PDFService:
 
             # Open the source PDF
             with open(file_path, 'rb') as file:
-                pdf = PyPDF2.PdfReader(file)
-                pdf_writer = PyPDF2.PdfWriter()
+                pdf = pypdf.PdfReader(file)
+                pdf_writer = pypdf.PdfWriter()
 
                 # Add all pages to writer
                 for page in pdf.pages:
@@ -406,7 +406,7 @@ class PDFService:
         try:
             # Open the source PDF
             with open(file_path, 'rb') as file:
-                pdf = PyPDF2.PdfReader(file)
+                pdf = pypdf.PdfReader(file)
 
                 # Check if PDF is encrypted
                 if not pdf.is_encrypted:
@@ -424,7 +424,7 @@ class PDFService:
                     raise ValueError("Invalid password")
 
                 # Create new PDF without encryption
-                pdf_writer = PyPDF2.PdfWriter()
+                pdf_writer = pypdf.PdfWriter()
 
                 # Add all pages to writer
                 for page in pdf.pages:
@@ -446,7 +446,7 @@ class PDFService:
         """Get all form fields in a PDF file"""
         try:
             with open(file_path, 'rb') as file:
-                pdf = PyPDF2.PdfReader(file)
+                pdf = pypdf.PdfReader(file)
 
                 # Get form fields and their values
                 try:
@@ -467,7 +467,7 @@ class PDFService:
         try:
             # Open the source PDF
             with open(file_path, 'rb') as file:
-                pdf = PyPDF2.PdfReader(file)
+                pdf = pypdf.PdfReader(file)
 
                 # Get existing form fields to check if the provided fields exist
                 try:
@@ -486,15 +486,15 @@ class PDFService:
                             f"Field '{field_name}' does not exist in the PDF form")
 
                 # Create a PDF writer
-                pdf_writer = PyPDF2.PdfWriter()
+                pdf_writer = pypdf.PdfWriter()
 
                 # Add all pages to the writer
                 for page in pdf.pages:
                     pdf_writer.add_page(page)
 
-                # Use the appropriate method based on the PyPDF2 version
+                # Use the appropriate method based on the pypdf version
                 try:
-                    # Try the newer method first (PyPDF2 2.10+)
+                    # Try the newer method first (pypdf 3.0+)
                     pdf_writer.update_form_fields(form_data)
                 except AttributeError:
                     # Fall back to updating pages individually
