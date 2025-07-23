@@ -45,4 +45,4 @@ Documentation coming soon.
 
 ## Creating Custom Tools
 
-For information on creating your own tools, see the [Tool Development](/development/creating-tools) section.
+For information on creating your own tools, see the [Tool Development](../development/creating-tools) section.
