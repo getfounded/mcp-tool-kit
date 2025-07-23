@@ -23,12 +23,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: docs/package-lock.json
 
       - name: Install dependencies
         working-directory: ./docs
-        run: npm ci
+        run: npm install
 
       - name: Configure Git
         run: |
@@ -38,8 +36,11 @@ jobs:
       - name: Deploy to GitHub Pages
         working-directory: ./docs
         env:
-          GIT_USER: github-actions[bot]
-          GIT_PASS: ${{ secrets.GITHUB_TOKEN }}
+          USE_SSH: false
+          GIT_USER: git
           DEPLOYMENT_BRANCH: gh-pages
         run: |
+          git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
           npm run deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
