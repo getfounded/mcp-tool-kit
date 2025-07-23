@@ -1,24 +1,31 @@
 services:
   mcp-server:
     build: .
+    container_name: mcp-server
     ports:
-      - "8000:8000"  # Maps host port 8000 to container port 8000
+      - "8080:8080"  # SSE server port
     volumes:
       - ./.env:/app/.env  # Mount .env file for environment variables
+      - ./config.yaml:/app/config.yaml  # Mount config file
+      - ~/Documents:/app/documents  # Mount documents directory
     environment:
+      # API Keys from .env file
       - BRAVE_API_KEY=${BRAVE_API_KEY}
       - BROWSERBASE_API_KEY=${BROWSERBASE_API_KEY}
       - BROWSERBASE_PROJECT_ID=${BROWSERBASE_PROJECT_ID}
       - NEWS_API_KEY=${NEWS_API_KEY}
+      - FRED_API_KEY=${FRED_API_KEY}
+      - OPENWEATHER_API_KEY=${OPENWEATHER_API_KEY}
+      # MCP Configuration
       - PYTHONUNBUFFERED=1  # Ensures python output isn't buffered
-      - MCP_HOST=0.0.0.0  # Host binding for MCP server
-      - MCP_PORT=8000     # Port for MCP server
-      - MCP_LOG_LEVEL=debug  # Log level
+      - MCP_LOG_LEVEL=${MCP_LOG_LEVEL:-INFO}
+      - MCP_FILESYSTEM_DIRS=${MCP_FILESYSTEM_DIRS:-~/Documents,~/Downloads}
     restart: unless-stopped
     tty: true
+    stdin_open: true  # Keep stdin open for stdio mode
     healthcheck:
       test: ["CMD", "./healthcheck.sh"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 5s  
+      start_period: 10s
