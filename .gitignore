@@ -9,3 +9,5 @@ config_ui.py
 launcher.py
 MANIFEST.in
 roadmap.md
+/.venv
+./venv

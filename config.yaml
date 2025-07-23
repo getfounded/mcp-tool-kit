@@ -1,0 +1,81 @@
+# MCP Tool Kit Configuration
+# This file controls which tools are enabled and their configuration
+
+# Enable/disable specific tools
+enabled_tools:
+  # Core tools
+  filesystem: true
+  time_tools: true
+  sequential_thinking: true
+  
+  # Search and data tools
+  brave_search: true
+  news_api: true
+  worldbank: true
+  yfinance: true
+  fred: true
+  
+  # Document and productivity tools
+  document_management: true
+  excel: true
+  ppt: true
+  
+  # Automation tools
+  browser_automation: true
+  streamlit: true
+  vapi: false  # Requires Vapi API key
+  shopify: false  # Requires Shopify credentials
+
+# Tool-specific configuration
+tool_config:
+  filesystem:
+    # Directories the filesystem tool can access
+    # Use environment variable MCP_FILESYSTEM_DIRS to override
+    allowed_directories:
+      - "~"
+      - "~/Documents"
+      - "~/Downloads"
+    allow_file_deletion: false
+    
+  brave_search:
+    # API key - set BRAVE_SEARCH_API_KEY environment variable
+    max_results: 10
+    
+  news_api:
+    # API key - set NEWS_API_KEY environment variable
+    default_language: "en"
+    default_country: "us"
+    
+  fred:
+    # API key - set FRED_API_KEY environment variable
+    default_frequency: "monthly"
+    
+  browser_automation:
+    headless: true
+    timeout: 30000  # milliseconds
+    
+  excel:
+    default_sheet_name: "Sheet1"
+    
+  ppt:
+    default_template: "default"
+    
+  streamlit:
+    default_port: 8501
+    
+# Server configuration
+server:
+  # Default transport mechanism (stdio or sse)
+  default_transport: "stdio"
+  
+  # SSE server configuration
+  sse:
+    host: "0.0.0.0"
+    port: 8080
+    
+  # Logging configuration
+  log_level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  
+  # Performance settings
+  max_concurrent_tools: 10
+  tool_timeout: 300  # seconds
