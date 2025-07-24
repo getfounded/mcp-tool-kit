@@ -62,3 +62,7 @@ mcp-tool-kit/
 - Learn how to [install](getting-started/installation) MCP Tool Kit
 - Explore the [available tools](tools/overview)
 - Start [developing your own tools](development/creating-tools)
+
+## Documentation
+
+This documentation is available online at [https://docs.mcp-tool-kit.com](https://docs.mcp-tool-kit.com)

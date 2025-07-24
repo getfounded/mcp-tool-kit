@@ -38,7 +38,7 @@ This command will:
 - Build the documentation
 - Create a `gh-pages` branch if it doesn't exist
 - Push the built files to that branch
-- The site will be available at: https://getfounded.github.io/mcp-tool-kit/
+- The site will be available at: https://docs.mcp-tool-kit.com/
 
 ### 3. Automatic Deployment (GitHub Actions)
 
@@ -55,7 +55,7 @@ Two workflows are available:
 ### 4. Verify Deployment
 
 After deployment (manual or automatic):
-1. Go to https://getfounded.github.io/mcp-tool-kit/
+1. Go to https://docs.mcp-tool-kit.com/
 2. You should see the documentation site
 3. Check the Actions tab in GitHub to see deployment status
 

@@ -76,6 +76,36 @@ tool_config:
    # ... other keys
    ```
 
+## 💾 Storage Setup
+
+MCP Tool Kit uses a dedicated storage directory for file operations:
+
+- **Windows**: `C:\Users\{Username}\mcp-tool-kit-storage`
+- **Mac/Linux**: `~/mcp-tool-kit-storage`
+
+### Automatic Setup
+The storage directory is automatically created when you first run the Docker container. You can also manually set it up:
+
+**Windows (PowerShell)**:
+```powershell
+.\scripts\setup-storage.ps1
+```
+
+**Mac/Linux**:
+```bash
+./scripts/setup-storage.sh
+```
+
+### Storage Structure
+```
+mcp-tool-kit-storage/
+├── documents/     # For document files
+├── downloads/     # For downloaded files
+└── workspace/     # For temporary work files
+```
+
+All file operations through the filesystem tool will be restricted to this directory for security.
+
 ## 🔌 Connecting to Claude Desktop
 
 1. Start the server in stdio mode using the launcher
@@ -119,12 +149,13 @@ class MyCustomTool(BaseTool):
         return f"Processed: {param}"
 ```
 
-See the [developer documentation](docs/) for detailed guides.
+See the [developer documentation](https://docs.mcp-tool-kit.com) for detailed guides.
 
 ## 📚 Documentation
 
-Full documentation is available in the `docs/` directory. To view:
+Full documentation is available at [https://docs.mcp-tool-kit.com](https://docs.mcp-tool-kit.com).
 
+To run documentation locally:
 1. `cd docs`
 2. `npm install`
 3. `npm start`
@@ -163,5 +194,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 🆘 Support
 
 - [GitHub Issues](https://github.com/getfounded/mcp-tool-kit/issues)
-- [Documentation](docs/)
+- [Documentation](https://docs.mcp-tool-kit.com)
 - [Discord Community](#) (coming soon)

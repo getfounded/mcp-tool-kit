@@ -7,7 +7,7 @@ services:
     volumes:
       - ./.env:/app/.env  # Mount .env file for environment variables
       - ./config.yaml:/app/config.yaml  # Mount config file
-      - ~/Documents:/app/documents  # Mount documents directory
+      - ~/mcp-tool-kit-storage:/app/storage  # Mount dedicated storage directory
     environment:
       # API Keys from .env file
       - BRAVE_API_KEY=${BRAVE_API_KEY}
@@ -19,7 +19,7 @@ services:
       # MCP Configuration
       - PYTHONUNBUFFERED=1  # Ensures python output isn't buffered
       - MCP_LOG_LEVEL=${MCP_LOG_LEVEL:-INFO}
-      - MCP_FILESYSTEM_DIRS=${MCP_FILESYSTEM_DIRS:-~/Documents,~/Downloads}
+      - MCP_FILESYSTEM_DIRS=${MCP_FILESYSTEM_DIRS:-/app/storage}
     restart: unless-stopped
     tty: true
     stdin_open: true  # Keep stdin open for stdio mode
