@@ -9,6 +9,7 @@ on:
     paths:
       - 'docs/**'
       - '.github/workflows/deploy-docs.yml'
+      - 'README.md'  # Also trigger on README changes
   
   # Allow manual trigger
   workflow_dispatch:
