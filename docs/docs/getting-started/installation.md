@@ -6,42 +6,104 @@ sidebar_position: 1
 
 There are several ways to install and run MCP Tool Kit.
 
-## Prerequisites
+## 🚀 Quick Install - No Git Required!
 
-Before installing, ensure you have:
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
-- [Git](https://git-scm.com/downloads) (optional, for cloning the repository)
+The easiest way to install MCP Tool Kit is using our one-line installers:
 
-## Quick Install (Recommended)
+### 🖥️ Windows
 
-### 1. Clone the Repository
+Open PowerShell as Administrator and run:
+
+```powershell
+irm https://raw.githubusercontent.com/getfounded/mcp-tool-kit/main/install.ps1 | iex
+```
+
+### 🍎 macOS
+
+Open Terminal and run:
+
+```bash
+bash <(curl -s https://raw.githubusercontent.com/getfounded/mcp-tool-kit/main/install.sh)
+```
+
+### 🐧 Linux
+
+Open Terminal and run:
+
+```bash
+bash <(wget -qO- https://raw.githubusercontent.com/getfounded/mcp-tool-kit/main/install.sh)
+```
+
+## ✨ What the Quick Installer Does
+
+The installer will automatically:
+
+1. **Download MCP Tool Kit** - No Git required!
+2. **Check for Docker** - Helps install if missing
+3. **Create shortcuts** - Desktop and Start Menu/Applications
+4. **Set up launcher** - Easy menu-driven interface
+5. **Configure paths** - Optionally adds to system PATH
+
+## 📋 Prerequisites
+
+The only requirement is:
+- **Docker Desktop** - The installer will help you install it if needed
+
+Supported Operating Systems:
+- Windows 10/11 (with PowerShell 5.0+)
+- macOS 10.14+
+- Linux with bash shell
+
+## 📦 Alternative Installation Methods
+
+### Method 1: Download Pre-packaged Release
+
+1. Download the latest release:
+   - [Windows: MCP-Tool-Kit-Windows.zip](https://github.com/getfounded/mcp-tool-kit/releases/latest)
+   - [Mac/Linux: MCP-Tool-Kit-Unix.tar.gz](https://github.com/getfounded/mcp-tool-kit/releases/latest)
+
+2. Extract and run:
+   - **Windows**: Run `install.bat`
+   - **Mac/Linux**: Run `./install.sh`
+
+### Method 2: Git Clone (for developers)
 
 ```bash
 git clone https://github.com/getfounded/mcp-tool-kit.git
 cd mcp-tool-kit
 ```
 
-Or download the ZIP file from GitHub and extract it.
+### Method 3: Docker-Only Installation
 
-### 2. Run the Launcher
+If you already have Docker and want the minimal setup:
 
-#### Windows
-Double-click `launch.bat` or run:
-```cmd
-launch.bat
-```
-
-#### Mac/Linux
 ```bash
-chmod +x launch.sh
-./launch.sh
+docker run -it --name mcp-toolkit ghcr.io/getfounded/mcp-tool-kit:latest
 ```
 
-### 3. Choose Your Mode
+## 🚦 Running MCP Tool Kit
+
+After installation, use the launcher:
+
+### Windows
+Double-click the desktop shortcut or run:
+```cmd
+C:\Users\%USERNAME%\mcp-tool-kit\launch.ps1
+```
+
+### Mac/Linux
+Open from Applications (macOS) or run:
+```bash
+~/mcp-tool-kit/launch.sh
+```
+
+### Choose Your Mode
 
 The launcher will present options:
 1. **stdio mode** - For Claude Desktop integration
 2. **SSE mode** - For web access at http://localhost:8080
+3. **Update** - Update to the latest version
+4. **View logs** - Check server logs
 
 ## Manual Installation
 
