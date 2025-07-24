@@ -44,6 +44,14 @@ jobs:
         working-directory: ./docs
         run: npm run build
         
+      - name: Verify CNAME file
+        run: |
+          if [ -f ./docs/build/CNAME ]; then
+            echo "CNAME file found with content: $(cat ./docs/build/CNAME)"
+          else
+            echo "Warning: CNAME file not found in build output"
+          fi
+          
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
