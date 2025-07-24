@@ -6,6 +6,8 @@ A comprehensive toolkit for the Model Context Protocol (MCP) with automatic tool
 [![Python versions](https://img.shields.io/pypi/pyversions/mcptoolkit.svg)](https://pypi.org/project/mcptoolkit/)
 [![License](https://img.shields.io/github/license/getfounded/mcp-tool-kit.svg)](https://github.com/getfounded/mcp-tool-kit/blob/main/LICENSE)
 
+📚 **[Official Documentation](https://docs.mcp-tool-kit.com)** | 🌐 **[Website](https://mcp-tool-kit.com)** | 💬 **[Community](https://github.com/getfounded/mcp-tool-kit/discussions)**
+
 ## 🚀 Quick Start (Windows/Mac/Linux)
 
 ### Prerequisites
