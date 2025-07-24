@@ -27,6 +27,19 @@ const sidebars = {
     },
     {
       type: 'category',
+      label: 'SDK',
+      items: [
+        'sdk/overview',
+        'sdk/quick-start',
+        'sdk/api-reference',
+        'sdk/examples',
+        'sdk/advanced-features',
+        'sdk/migration',
+        'sdk/best-practices',
+      ],
+    },
+    {
+      type: 'category',
       label: 'Tool Development',
       items: [
         'development/creating-tools',
