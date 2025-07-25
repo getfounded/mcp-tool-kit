@@ -113,8 +113,31 @@ curl http://localhost:8080/sse
 2. Verify firewall settings
 3. Try `localhost` instead of `127.0.0.1`
 
+## Using the SDK
+
+For programmatic access to MCP tools in your Python applications:
+
+```python
+from mcp_tool_kit import MCPToolKitSDK
+
+# Initialize SDK
+sdk = MCPToolKitSDK()
+
+# Call a tool
+result = sdk.call_tool("read_file", {"path": "example.txt"})
+if result.success:
+    print(result.data)
+
+# Use convenience methods
+file = sdk.file("output.txt")
+file.write("Hello from SDK!")
+```
+
+See the [SDK Quick Start](../sdk/quick-start) for more details.
+
 ## Next Steps
 
 - [Configuration Guide](configuration) - Enable/disable tools
+- [SDK Documentation](../sdk/overview) - Use tools in your applications
 - [Available Tools](../tools/overview) - Explore all tools
 - [Creating Tools](../development/creating-tools) - Build your own

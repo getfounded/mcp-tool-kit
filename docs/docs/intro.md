@@ -34,6 +34,14 @@ Easy deployment with Docker, including one-click launch scripts.
 ### 📚 Extensible Architecture
 Built on a standardized base class system that makes creating new tools straightforward.
 
+### 🛠️ Powerful SDK
+A comprehensive Python SDK for integrating MCP tools into your applications with features like:
+- Structured error handling
+- Batch operations
+- Async/await support
+- Built-in caching and retry logic
+- Middleware and event hooks
+
 ## Getting Started
 
 To get started with MCP Tool Kit:
@@ -41,7 +49,8 @@ To get started with MCP Tool Kit:
 1. **[Install](getting-started/installation)** the toolkit using Docker or manual setup
 2. **[Configure](getting-started/configuration)** the tools you want to use
 3. **[Connect](getting-started/quick-start)** to Claude Desktop or use the SSE transport
-4. **[Create](development/creating-tools)** your own custom tools
+4. **[Use the SDK](sdk/quick-start)** to integrate tools into your Python applications
+5. **[Create](development/creating-tools)** your own custom tools
 
 ## Architecture Overview
 

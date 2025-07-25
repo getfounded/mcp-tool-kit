@@ -1,0 +1,182 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Create Release Package for Windows
+      run: |
+        # Create Windows package
+        mkdir -p release/windows
+        cp -r app release/windows/
+        cp -r scripts release/windows/
+        cp docker-compose.yml release/windows/
+        cp mcp_server_v2.py release/windows/
+        cp requirements.txt release/windows/
+        cp .env.template release/windows/
+        cp config.yaml release/windows/
+        cp install.ps1 release/windows/
+        cp install.bat release/windows/
+        cp launch.bat release/windows/
+        cp README.md release/windows/
+        cp -r docs release/windows/
+        
+        # Create zip
+        cd release
+        zip -r MCP-Tool-Kit-Windows.zip windows/
+        cd ..
+    
+    - name: Create Release Package for Unix
+      run: |
+        # Create Unix package
+        mkdir -p release/unix
+        cp -r app release/unix/
+        cp -r scripts release/unix/
+        cp docker-compose.yml release/unix/
+        cp mcp_server_v2.py release/unix/
+        cp requirements.txt release/unix/
+        cp .env.template release/unix/
+        cp config.yaml release/unix/
+        cp install.sh release/unix/
+        cp launch.sh release/unix/
+        cp README.md release/unix/
+        cp -r docs release/unix/
+        
+        # Make scripts executable
+        chmod +x release/unix/install.sh
+        chmod +x release/unix/launch.sh
+        chmod +x release/unix/scripts/*.sh
+        
+        # Create tar.gz
+        cd release
+        tar -czf MCP-Tool-Kit-Unix.tar.gz unix/
+        cd ..
+    
+    - name: Create Standalone Installers
+      run: |
+        # Copy standalone installers
+        cp install.ps1 release/
+        cp install.sh release/
+        cp install.bat release/
+        chmod +x release/install.sh
+    
+    - name: Generate SHA256 Checksums
+      run: |
+        cd release
+        sha256sum MCP-Tool-Kit-Windows.zip > checksums.txt
+        sha256sum MCP-Tool-Kit-Unix.tar.gz >> checksums.txt
+        sha256sum install.ps1 >> checksums.txt
+        sha256sum install.sh >> checksums.txt
+        sha256sum install.bat >> checksums.txt
+        cd ..
+    
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: |
+          ## 🚀 Quick Install
+          
+          ### Windows (PowerShell)
+          ```powershell
+          irm https://raw.githubusercontent.com/getfounded/mcp-tool-kit/main/install.ps1 | iex
+          ```
+          
+          ### macOS/Linux
+          ```bash
+          bash <(curl -s https://raw.githubusercontent.com/getfounded/mcp-tool-kit/main/install.sh)
+          ```
+          
+          ## 📦 Downloads
+          
+          - **Windows Package**: MCP-Tool-Kit-Windows.zip
+          - **macOS/Linux Package**: MCP-Tool-Kit-Unix.tar.gz
+          - **Windows Installer**: install.ps1 / install.bat
+          - **Unix Installer**: install.sh
+          
+          ## ✨ What's New
+          
+          - No Git required for installation!
+          - Automatic Docker installation help
+          - Desktop shortcuts creation
+          - Enhanced launcher with update functionality
+          
+          ## 📝 Checksums
+          
+          See `checksums.txt` for SHA256 hashes of all files.
+        draft: false
+        prerelease: false
+    
+    - name: Upload Windows Package
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./release/MCP-Tool-Kit-Windows.zip
+        asset_name: MCP-Tool-Kit-Windows.zip
+        asset_content_type: application/zip
+    
+    - name: Upload Unix Package
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./release/MCP-Tool-Kit-Unix.tar.gz
+        asset_name: MCP-Tool-Kit-Unix.tar.gz
+        asset_content_type: application/gzip
+    
+    - name: Upload Windows PowerShell Installer
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./release/install.ps1
+        asset_name: install.ps1
+        asset_content_type: text/plain
+    
+    - name: Upload Windows Batch Installer
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./release/install.bat
+        asset_name: install.bat
+        asset_content_type: text/plain
+    
+    - name: Upload Unix Installer
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./release/install.sh
+        asset_name: install.sh
+        asset_content_type: text/plain
+    
+    - name: Upload Checksums
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./release/checksums.txt
+        asset_name: checksums.txt
+        asset_content_type: text/plain

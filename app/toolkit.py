@@ -1,12 +1,19 @@
 import logging
 from typing import List, Dict, Optional, Any, Union
+import warnings
 
-# Assuming MCPClient is defined elsewhere
+# Import the new SDK
+from app.sdk import MCPToolKitSDK, ToolResult
 from app.toolkit_client import MCPClient
 
 
 class MCPToolKit:
-    """Client wrapper for the MCP Tool Kit providing easy access to all tools."""
+    """
+    Legacy client wrapper for the MCP Tool Kit.
+    
+    DEPRECATED: Please use MCPToolKitSDK instead for new applications.
+    This class is maintained for backward compatibility.
+    """
 
     def __init__(self, server_url: str = "http://localhost:8000"):
         """
@@ -15,7 +22,15 @@ class MCPToolKit:
         Args:
             server_url: URL of the MCP Tool Kit server. Defaults to http://localhost:8000.
         """
-        self.client = MCPClient(server_url)
+        warnings.warn(
+            "MCPToolKit is deprecated. Please use MCPToolKitSDK for new applications.",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        
+        # Use the new SDK internally
+        self.sdk = MCPToolKitSDK(server_url)
+        self.client = MCPClient(server_url)  # Keep for compatibility
         self.logger = logging.getLogger("MCPToolKit")
 
         # Set up logging

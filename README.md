@@ -8,15 +8,53 @@ A comprehensive toolkit for the Model Context Protocol (MCP) with automatic tool
 
 📚 **[Official Documentation](https://docs.mcp-tool-kit.com)** | 🌐 **[Website](https://mcp-tool-kit.com)** | 💬 **[Community](https://github.com/getfounded/mcp-tool-kit/discussions)**
 
-## 🚀 Quick Start (Windows/Mac/Linux)
+---
 
-### Prerequisites
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
-- [Git](https://git-scm.com/downloads) (optional, for updates)
+🚀 **Built by [UsefulAI](https://usefulai.ai)** | 📖 **[From GitHub to Commercial Success](https://usefulai.ai/blog/articles/from-github-to-commercial-success)**
 
-### One-Click Installation
+## 🚀 Quick Install - No Git Required!
 
-1. **Clone or download this repository**
+Choose your platform and run ONE command:
+
+### 🖥️ Windows (PowerShell)
+```powershell
+irm https://raw.githubusercontent.com/getfounded/mcp-tool-kit/main/install.ps1 | iex
+```
+
+### 🍎 macOS (Terminal)
+```bash
+bash <(curl -s https://raw.githubusercontent.com/getfounded/mcp-tool-kit/main/install.sh)
+```
+
+### 🐧 Linux (Terminal)
+```bash
+bash <(wget -qO- https://raw.githubusercontent.com/getfounded/mcp-tool-kit/main/install.sh)
+```
+
+**That's it!** The installer will:
+- ✅ Download MCP Tool Kit (no Git needed!)
+- ✅ Check for Docker (helps install if missing)
+- ✅ Create desktop shortcuts
+- ✅ Set up everything automatically
+
+## 📦 Alternative Installation Methods
+
+<details>
+<summary>Manual Download</summary>
+
+1. Download the latest release:
+   - [Windows: MCP-Tool-Kit-Windows.zip](https://github.com/getfounded/mcp-tool-kit/releases/latest)
+   - [Mac/Linux: MCP-Tool-Kit-Unix.tar.gz](https://github.com/getfounded/mcp-tool-kit/releases/latest)
+
+2. Extract and run:
+   - **Windows**: Run `install.bat`
+   - **Mac/Linux**: Run `./install.sh`
+</details>
+
+<details>
+<summary>Git Installation (for developers)</summary>
+
+1. **Clone the repository**
    ```bash
    git clone https://github.com/getfounded/mcp-tool-kit.git
    cd mcp-tool-kit
@@ -25,12 +63,15 @@ A comprehensive toolkit for the Model Context Protocol (MCP) with automatic tool
 2. **Run the launcher**
    - **Windows**: Double-click `launch.bat`
    - **Mac/Linux**: Run `./launch.sh`
+</details>
 
-3. **Choose your mode**:
-   - Option 1: stdio mode (for Claude Desktop)
-   - Option 2: SSE mode (for web access at http://localhost:8080)
+<details>
+<summary>Docker-Only Installation</summary>
 
-That's it! The launcher will handle Docker setup and configuration automatically.
+```bash
+docker run -it --name mcp-toolkit ghcr.io/getfounded/mcp-tool-kit:latest
+```
+</details>
 
 ## 🔧 Features
 
