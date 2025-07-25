@@ -27,6 +27,19 @@ const sidebars = {
     },
     {
       type: 'category',
+      label: 'SDK',
+      items: [
+        'sdk/overview',
+        'sdk/quick-start',
+        'sdk/api-reference',
+        'sdk/examples',
+        'sdk/advanced-features',
+        'sdk/migration',
+        'sdk/best-practices',
+      ],
+    },
+    {
+      type: 'category',
       label: 'Tool Development',
       items: [
         'development/creating-tools',
@@ -54,15 +67,6 @@ const sidebars = {
         'deployment/docker',
         'deployment/sse-transport',
         'deployment/claude-desktop',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'API Reference',
-      items: [
-        'api/tool-interface',
-        'api/registry',
-        'api/configuration',
       ],
     },
   ],
