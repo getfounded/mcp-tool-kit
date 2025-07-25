@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/getfounded-mcp-tool-kit-badge.png)](https://mseep.ai/app/getfounded-mcp-tool-kit)
+
 # MCP Tool Kit
 
 A comprehensive toolkit for the Model Context Protocol (MCP) with automatic tool discovery and multiple transport options.
